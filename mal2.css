@@ -14,6 +14,9 @@ FONTS
 
 
 /* General codes */
+
+
+
 @\import url(https://fonts.googleapis.com/css?family=Orbitron);
 @\import url(http://fonts.googleapis.com/css?family=Amaranth);
 @\import url(https://fonts.googleapis.com/css?family=Rancho);
@@ -42,29 +45,6 @@ FONTS
 95% {opacity: 0}
 99% {opacity: 0}
 }
- 
-
-  .list-unit.watching:before {
-	background-image: url(http://i.imgur.com/WwxHWKb.png);
-        background-size:cover;
-	background-repeat: no-repeat;
-	background-position: right bottom;
-	content: '';
-	left: 0;
-	top: 0;
-		height: 100%;
-position: fixed !important;
-top: 0 !important;
-width: 100% !Important;
-z-index: 101;
-color: transparent;
-content: "";
-pointer-events: none;
-opacity: 0;
--moz-animation:mymove 2.5s; /* Firefox */
--webkit-animation:mymove 2.5s; /* Chrome */
-}
-
 
 
 td {
@@ -685,6 +665,10 @@ PROFILE IMAGE
 
 
 
+
+
+
+
 /*
 LIST CONTAINER
 */
@@ -719,10 +703,10 @@ LIST CONTAINER
 	margin-bottom: 96px;
 	padding: 32px;
 	padding-bottom: 10px;
-	background-color: var(--color-primary-transparent);
-	background: -moz-linear-gradient(left, var(--color-primary-gradient-start) 0%, var(--color-primary-gradient-end) 100%);
-	background: -webkit-linear-gradient(left, var(--color-primary-gradient-start) 0%, var(--color-primary-gradient-end) 100%);
-	background: linear-gradient(to right, var(--color-primary-gradient-start) 0%, var(--color-primary-gradient-end) 100%);
+	/*background-color: var(--color-primary-transparent);*/
+	/*background: -moz-linear-gradient(left, var(--color-primary-gradient-start) 0%, var(--color-primary-gradient-end) 100%);*/
+	/*background: -webkit-linear-gradient(left, var(--color-primary-gradient-start) 0%, var(--color-primary-gradient-end) 100%);*/
+	/*background: linear-gradient(to right, var(--color-primary-gradient-start) 0%, var(--color-primary-gradient-end) 100%);*/
 }
 
 .list-unit::before {
@@ -744,6 +728,8 @@ LIST CONTAINER
 .list-table {
 	background-color: transparent;
 }
+
+
 
 
 /*
@@ -955,6 +941,33 @@ background-color: rgba(0, 0, 0, .5) !important;
 
 
 
+
+
+
+
+.list-table .list-table-data:hover {
+
+    transition: .2s linear;
+    background-color: rgba(107, 65, 124, 0.8);
+}
+
+.list-table .list-table-data {
+box-shadow: 0 0 2px #fff, 0 0 1px #cd06eb, 1px 1px 7px #fff, 0 0 0 #cd06eb !important;
+}
+
+.list-table .list-table-data:hover .data.title  {
+  text-shadow: 0 0 2px #5c4ef5, 0 0 1px #5c4ef5, 0 1px 7px #5c4ef5, 0 0 0.5px #5c4ef5;
+  transition: .1s linear;
+  }
+
+.list-table .list-table-data .data.number:hover {
+transition: .5s linear;
+    background-color: rgba(107, 65, 124, 0.8);
+}
+
+.header a:hover,.list-table .list-table-data a:not(.edit-disabled):hover {
+text-decoration:underline;
+}
 
 
 /**
@@ -1507,28 +1520,65 @@ background-position: 50% 50%;
 background-color:rgba(0, 0, 0, .5);
 }
 
-.list-unit .loading-space {
-    background-color:rgba(0, 0, 0, .5);
-     color: #fff !important;
-     display: inline-block;
-     margin: auto;
-    width: 800px;
-    font-size: 11px;
-    line-height:15px;
-    text-align: middle !important;
-	padding-top: 0px;
- margin-bottom: 0px;
-  height:345px;
-  background-attachment:scroll;
-  background-image:url(http://i.imgur.com/IHLE4uG.png);
-  background-repeat: no-repeat no-repeat;
-  background-position: 0% 100%;
-}
+/*.list-unit .loading-space {*/
+/*    background-color:rgba(0, 0, 0, .5);*/
+/*     color: #fff !important;*/
+/*     display: inline-block;*/
+/*     margin: auto;*/
+/*    width: 800px;*/
+/*    font-size: 11px;*/
+/*    line-height:15px;*/
+/*    text-align: middle !important;*/
+/*	padding-top: 0px;*/
+/* margin-bottom: 0px;*/
+/*  height:345px;*/
+/*  background-attachment:scroll;*/
+/*  background-image:url(http://i.imgur.com/IHLE4uG.png);*/
+/*  background-repeat: no-repeat no-repeat;*/
+/*  background-position: 0% 100%;*/
+/*}*/
 
 
 
 
+/* The list background */
+/*body {*/
+/*background-image: url("http://i.imgur.com/vnv8k1s.jpg");*/
+/*background-attachment: fixed;*/
+/*background-position: left top;*/
+/*background-repeat: no-repeat;*/
+/*background-size: cover;*/
+/*margin: 0 0 0 0;*/
+/*text-align: center;*/
+/*font-family: Verdana, Arial;*/
+/*font-size: 11px;*/
+/*top: 525px;*/
+/*color: #fff;*/
+/*padding-bottom: 10px !important;*/
 
+/*}*/
+
+
+/* black opacity background of the category images */
+
+/*.list-unit.watching .list-status-title:before, .list-unit.onhold .list-status-title:before, .list-unit.plantowatch .list-status-title:before, .list-unit.completed .list-status-title:before, .list-unit.dropped .list-status-title:before {*/
+/*color: transparent;*/
+/*height: 260px !important;*/
+/*width: 800px! important;*/
+/*background-image: url("");*/
+/*background-repeat: no-repeat;*/
+/*background-size: contain;*/
+/*position: absolute !important;*/
+/*display: block !important;*/
+/*left: 0 !important;*/
+/*right: 0 !important;*/
+/*top: 0 !important;*/
+/*content: "";*/
+/*z-index: -2 !important;*/
+/*background-color: transparent;*/
+/*margin-bottom: 20px !important;*/
+/*pointer-events: none;*/
+/*}*/
 
 
 
@@ -1914,3 +1964,131 @@ MOBILE FIXES
 		background-size: 100%;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+/*
+Animation*/
+   
+@keyframes move-twink-back {
+    from {background-position:0 0;}
+    to {background-position:-10000px 5000px;}
+}
+@-webkit-keyframes move-twink-back {
+    from {background-position:0 0;}
+    to {background-position:-10000px 5000px;}
+}
+@-moz-keyframes move-twink-back {
+    from {background-position:0 0;}
+    to {background-position:-10000px 5000px;}
+}
+@-ms-keyframes move-twink-back {
+    from {background-position:0 0;}
+    to {background-position:-10000px 5000px;}
+}
+ 
+@keyframes move-clouds-back {
+    from {background-position:0 0;}
+    to {background-position:10000px 0;}
+}
+@-webkit-keyframes move-clouds-back {
+    from {background-position:0 0;}
+    to {background-position:10000px 0;}
+}
+@-moz-keyframes move-clouds-back {
+    from {background-position:0 0;}
+    to {background-position:10000px 0;}
+}
+@-ms-keyframes move-clouds-back {
+    from {background-position: 0;}
+    to {background-position:10000px 0;}
+}
+.list-container:after {
+ position: fixed;
+    display: block;
+    content: '';
+    left: 0;
+bottom:0;
+    width: 100%;
+    height: 100%;
+    background:transparent url(http://i.imgur.com/4Ku9eFe.png) repeat top center;
+  -moz-animation:move-twink-back 200s linear infinite;
+  -ms-animation:move-twink-back 200s linear infinite;
+  -o-animation:move-twink-back 200s linear infinite;
+  -webkit-animation:move-twink-back 200s linear infinite;
+  animation:move-twink-back 200s linear infinite;
+z-index: -1 !important;
+}
+.list-container:before {
+ position: fixed;
+    display: block;
+    content: '';
+    left: 0;
+bottom:0;
+    width: 100%;
+    height: 100%;
+	top: calc(100% - 400px) !important;
+    background:transparent url(http://i.imgur.com/yB8QBAc.png) repeat top center;
+  -moz-animation:move-clouds-back 200s linear infinite;
+  -ms-animation:move-clouds-back 200s linear infinite;
+  -o-animation:move-clouds-back 200s linear infinite;
+  -webkit-animation:move-clouds-back 200s linear infinite;
+  animation:move-clouds-back 200s linear infinite;
+z-index: -1 !important;
+}
+
+
+.data.volume, .data.chapter, span a[href*="&tag=!"], span a[href*="&tag=%40"], span a[href*="&tag=~"] {display: none !important;}
+
+/* favorite */
+@media entrytags-favorites {}
+a[href$="&tag=*"]
+{position: absolute;
+left: 0;
+width: 150px;
+height: 0;
+font-size: 15px;
+top: 0;
+color: transparent !important;
+}
+
+a[href$="&tag=*"]:after
+{content: '\f005';
+font-family: 'FontAwesome' !important;
+display: inline-block;
+pointer-events: all;
+/* change the position below, and add in margin-whatever if it's not enough */
+position: absolute;
+top: 238px; 
+left: 135px;
+/* change the size of font */
+font-size: 1.1em;
+color: #fff !important;
+text-shadow: 0 0 2px #f200a5, 0 0 1px #f200a5, 1px 1px 7px #f200a5, 0 0 0 #fff !important;}
+
+/* Intro animation */
+/*@keyframes intro {*/
+/*  from {*/
+/*    opacity: 0;*/
+/*    margin-top: 100vh;*/
+/*  }*/
+/*  16% {*/
+/*    opacity: 0;*/
+/*    margin-top: 100vh;*/
+/*  }*/
+/*  to {*/
+/*    opacity: 1;*/
+/*    margin-top: 100px;*/
+/*  }*/
+/*}*/
+/*.list-container {*/
+/*  animation: intro 2s;*/
+/*}*/
