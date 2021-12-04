@@ -1153,6 +1153,20 @@ color: #fff !important;
     background-color: #a12f31
 }
 
+/*to change to black and white images*/
+.all_anime .list-item .data.status.plantowatch ~ .data.image, .all_anime .list-item .data.status.plantoread ~ .data.image {
+	-webkit-filter: grayscale(1);
+	filter: grayscale(1);
+}
+
+
+
+
+
+
+
+
+
 /*list status*/
 .list-table .list-table-data:hover .data.status.completed:before, .list-table .list-table-data:hover .data.status.reading:before, .list-table .list-table-data:hover .data.status.watching:before,.list-table .list-table-data:hover .data.status.plantoread:before, .list-table .list-table-data:hover .data.status.plantowatch:before,.list-table .list-table-data:hover .data.status.onhold:before,.list-table .list-table-data:hover .data.status.dropped:before {
 height: 25px;
