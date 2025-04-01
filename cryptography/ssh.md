@@ -39,7 +39,7 @@ SSH works on a **client-server model**:
 ## 3. SSH Key Generation
 Generate a key pair using:
 ```bash
-ssh-keygen -t ed25519 -C "your_email@example.com"  # Best for modern systems
+ssh-keygen -t ed25519 -C "<comment>"  # Best for modern systems
 ```
 - Keys are stored in ~/.ssh/id_algorithm (e.g., id_ed25519, id_rsa).
 - The .pub file is the public key (can be shared).
