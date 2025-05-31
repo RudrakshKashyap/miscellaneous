@@ -1,0 +1,1 @@
+A **nibble** is of 4 bits, and can be represented as 1 hexadecimal digit.

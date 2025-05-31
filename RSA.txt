@@ -3,3 +3,5 @@ phi(p) = p-1,  only one number in range[1,p] is not coprime with 'p' which is p 
 phi(p.q) = p.q - (p+q - 1) = (p-1)(q-1)
 ==> p, 2p, 3p....pq  --> q numbers not coprime
 ==> q, 2q, 3q....pq  --> p numbers not coprime
+
+https://www.youtube.com/watch?v=nvcssTsiavg

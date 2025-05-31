@@ -1,16 +1,24 @@
+## Protocol
+
+A **protocol** is a set of rules or guidelines that define how data is transmitted, received, and processed in a network or communication system. Protocols ensure that different devices and systems can communicate effectively, even if they are made by different manufacturers or use different technologies.
+
 
 ## Resources
 - [YT Playlist - Networking Fundamentals](https://www.youtube.com/playlist?list=PLIFyRwBY_4bRLmKfP1KnZA6rZbRHtxmXi)
    - [Hub, Bridge, Switch, Router](https://youtu.be/H7-NR3Q3BeI?si=tR2Cehz4ls3uCt4m)
-   - [OSI Model - Layer 1, 2](https://youtu.be/H7-NR3Q3BeI?si=tR2Cehz4ls3uCt4m)
-   - [OSI Model - Layer 3, 4](https://youtu.be/0aGqGKrRE0g?si=V2yKC54iKpmHM-3i)
-   - [OSI Model - Layer 5, 6, 7](https://youtu.be/2iFFRqzX3yE?si=JJ_tmTmY6d-GMjYS)
+   - [OSI Model - Layer 1, 2 (Network Access Layers)](https://youtu.be/H7-NR3Q3BeI?si=tR2Cehz4ls3uCt4m)
+   - [OSI Model - Layer 3(Internet), 4(Transport)](https://youtu.be/0aGqGKrRE0g?si=V2yKC54iKpmHM-3i)
+   - [OSI Model - Layer 5, 6, 7 (Application Layer)](https://youtu.be/2iFFRqzX3yE?si=JJ_tmTmY6d-GMjYS)
    - [**How Data moves through the Internet**](https://youtu.be/YJGGYKAV4pA?si=DLCunOcloJ4hAnWi)
 
 
 ## OSI Model
 ![](https://pbs.twimg.com/media/Fhib8hlUoAEPq1U?format=jpg&name=4096x4096) 
 
+- **Routing Table:** A database stored in routers and hosts that determines where packets should be forwarded based on the destination IP.
+- **ARP(Address Resolution Protocol) Table:** Maps IP addresses to MAC addresses for devices on the *same local network*.
+- **MAC(Media Access Control) Address Table (Switch Table):** Used by switches to map MAC addresses to switch ports.
+- **NAT(Network Address Translation) Table:** A NAT (Network Address Translation) table is a critical component that enables multiple devices on a private network to share a single public IP address when communicating with the internet. This translation mechanism is fundamental to modern networking, helping conserve IPv4 addresses while providing basic security through obscurity.
 
 ## [Subnet Mask - Explained](https://youtu.be/s_Ntt6eTn94?si=72uI-Mc9dEy9JF2s&t=661) 
 
@@ -26,3 +34,7 @@
    | Last Host     | 208.36.47.102 | 11010000.00100100.00101111.01100110   |
    | Broadcast     | 208.36.47.103 | 11010000.00100100.00101111.01100111   |
    | Next Subnet   | 208.36.47.104 | 11010000.00100100.00101111.01101000   |
+
+## [Transmission Control Protocol(TCP)](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)  VS [User Datagram Protocol(UDP)](https://en.wikipedia.org/wiki/User_Datagram_Protocol)
+
+![](https://www.metered.ca/blog/content/images/2024/10/tcp-vs-udp-1.png)

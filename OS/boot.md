@@ -11,7 +11,7 @@ The boot sequence is the process a computer follows to load the operating system
 3. **Power-On Self-Test (POST)**
    - The BIOS/UEFI firmware runs hardware checks (CPU, RAM, storage, etc.)
    - If errors occur, beep codes or on-screen messages appear
-4. **BIOS/UEFI Loads Bootloader from MBR or EFI partition**
+4. **BIOS/UEFI Loads Bootloader from MBR(UEFI with CSM) or EFI partition**
 4. **Bootloader Execution**
    - The bootloader (e.g., GRUB for Linux, Windows Boot Manager for Windows) loads the OS kernel
    - In dual-boot systems, the bootloader lets you choose an OS
@@ -39,7 +39,8 @@ The boot sequence is the process a computer follows to load the operating system
 
 ## MBR (Master Boot Record) Overview
 
-MBR is a legacy partitioning scheme used to organize disk storage. It has been largely replaced by GPT in modern systems.
+- MBR is a legacy partitioning scheme used to organize disk storage. It has been largely replaced by GPT in modern systems.
+- The term "MBR" is used both for the partitioning scheme and the physical boot sector(first 512 bytes).
 
 ### GPT (GUID Partition Table) vs. MBR Comparison
 
