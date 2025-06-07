@@ -182,13 +182,14 @@ Supported Algorithms:
 ```yaml
 - Server Public Host Key: RSA/SHA-256
 - Server ECDH Public Key: curve25519
-- Signature: [exchange hash signed with server's private key, Proves the server owns the public host key]
+- Signature: [exchange hash(of exchange data that containes shared secret) signed with server's private key, Proves the server owns the public host key]
 ```
 
 **Client Actions:**
 1. Verify host key against `~/.ssh/known_hosts` (or prompts the user for trust).
-2. Compute shared secret (ECDH) → derive session keys
-3. Validate server's signature
+2. **First-Connection Trust**: On first connection, the client must manually verify the server’s host key fingerprint (or trust it blindly, risking MITM).
+3. Compute shared secret (ECDH) → derive session keys
+4. Validate server's signature
 
 ## 5. Encryption Activation
 ```plaintext
@@ -284,3 +285,67 @@ Client -> Server: SSH_MSG_DISCONNECT (Graceful close)
   - Post-`NEWKEYS`: Encrypted blobs (unless decrypted with a keylog file).
 
 This matches RFC 4253 (SSH Transport Layer Protocol, [Architecture](https://en.wikipedia.org/wiki/Secure_Shell#Architecture)) and real-world implementations like OpenSSH.
+
+
+
+# Transport Layer Security (TLS)
+TLS is the backbone of secure internet communications, protecting data as it travels across networks. This cryptographic protocol ensures privacy, integrity, and authentication for online interactions ranging from web browsing to email exchanges.
+
+### [TLS 1.3](https://www.gabriel.urdhr.fr/2022/02/26/tls1.3-intro/)
+
+**HKDF (HMAC-based Extract-and-Expand Key Derivation Function)** is a cryptographic key derivation function based on HMAC.
+
+#### **Why ClientRandom is Still Mandatory (Even with ECDHE)**
+Binds the Entire Handshake
+
+The Finished message includes a hash of all handshake messages, including ClientRandom.
+This ensures no part of the handshake was replayed or modified.
+
+Session keys would depend only on g^x and g^y.
+<br/> 
+If (due to a bug) x or y repeated, the same session key would be derived twice → replay possible!
+<br/> 
+ClientRandom ensures even if ECDHE randomness fails, keys are still unique.
+In PSK mode (no ECDHE), ClientRandom is the only source of freshness.
+
+While ClientRandom and ServerRandom are not directly used as explicit inputs to the HKDF (HMAC-based Extract-and-Expand Key Derivation Function) steps for key derivation, they are included in the **handshake transcript hash**, which is a critical input to the key derivation process. This ensures that the derived keys are **unique** and **dependent on the entire handshake**, including the randomness exchanged.
+
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+
+    Client->>Server: Client Hello (TLS 1.3, Ciphers, Client Random, Key Share (Client ECDHE pub key))
+    Server->>Client: Server Hello (Chosen Cipher, Server Random, Key Share (Server ECDHE pub key))
+    Note over Client,Server: ECDHE Shared Secret = private_key_C × PubKey_S = private_key_S × PubKey_C
+
+     Note over Client,Server: 1. early_secret = HKDF-Extract(0, PSK or 0). Always derived, even if PSK is not used.
+
+    Note over Client,Server: 2. handshake_secret = HKDF-Extract(ECDHE Shared Secret, early_secret)
+    Note over Client,Server: Generate Handshake Keys (encrypt Certificate, CertificateVerify, Finished)
+
+  Server->>Client: EncryptedExtensions (ALPN, SNI, etc.)
+    Server->>Client: Certificate (Server's Public Key)
+    Server->>Client: Certificate Verify (Proof of Private Key Ownership)
+    Server->>Client: Finished (Encrypted HMAC over handshake)
+    Client->>Server: Finished (Encrypted HMAC over handshake)
+    Note over Client,Server: Application Data (Encrypted with App Key)
+    Client->>Server: Encrypted Application Data
+    Server->>Client: Encrypted Application Data
+```
+
+
+### Comparison Diagram:
+```mermaid
+flowchart TD
+    A[TLS Handshake] --> B[TLS 1.2]
+    A --> C[TLS 1.3]
+    B --> D[2 Round Trips]
+    B --> E[RSA/DH Key Exchange]
+    B --> F[Vulnerable to Downgrade]
+    C --> G[1 Round Trip]
+    C --> H[ECDHE Only]
+    C --> I[No Insecure Ciphers]
+```
+Mermaid Live Editor (https://mermaid.live)

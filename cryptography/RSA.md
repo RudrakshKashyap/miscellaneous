@@ -1,6 +1,12 @@
-#TODO
+# TODO
+
+## [RSA Signatures](DigitalCertificate.md#1-rsa-signatures-direct-encryptiondecryption-of-the-hash)
+
+
+# Rivest, Shamir, and Adleman (RSA)
 
 The RSA algorithm is a public-key cryptosystem that relies on number-theoretic principles for secure communication. 
+
 ---
 
 ### **1. Key Generation**

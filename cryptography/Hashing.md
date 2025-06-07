@@ -3,7 +3,7 @@
 
 ## [MAC/HMAC](https://www.youtube.com/watch?v=fzMIjWFYQl0)
 
-A **Message Authentication Code (MAC)** is a cryptographic technique used to verify both the **integrity** and **authenticity** of a message. It ensures:
+A **Message Authentication Code (MAC)** is a cryptographic technique used to verify both the **integrity** and **authenticity** of a message. It combines a *message* with a *secret key* to produce a short piece of data (the MAC). It ensures:
 1. **Data Integrity** – The message has not been altered in transit.
 2. **Authenticity** – The message comes from the expected sender (and not an impostor).
 
@@ -12,7 +12,7 @@ Unlike digital signatures, MACs are faster but require a pre-shared key.
 ### **Types of MAC Algorithms**
 #### **1. HMAC (Hash-based MAC)**
 - Uses a **cryptographic hash function (e.g., SHA-256)** + a **secret key**.
-- Example: `HMAC-SHA256`
+- Example: `MAC = HMAC-SHA256(key, message)`
 - Secure against length-extension attacks.
 - Used in:
   - API authentication (e.g., AWS signatures).
@@ -73,6 +73,8 @@ Despite being cryptographically broken due to collision vulnerabilities, **MD5**
 
 # [SHA(Secure Hash Algorithm)-256](https://youtu.be/f9EbD6iY9zI?si=rmUhe1WaytjDRwqo&t=507)
 
+As of 2011, the best public attacks break preimage resistance for 52 out of 64 rounds of SHA-256 or 57 out of 80 rounds of SHA-512, and collision resistance for 46 out of 64 rounds of SHA-256.
+
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/SHA-2.svg/500px-SHA-2.svg.png)
 
 **Ch(E, F, G)** (Choose function): If bit of E is one choose bit from F otherwise G.
@@ -109,3 +111,47 @@ The **Merkle–Damgård construction** is a method for building cryptographic ha
 ---
 
 # TODO SHA-3 + Sponge Construction
+
+---
+
+### **Salt and Pepper in Password Security**  
+| Feature      | **Salt** | **Pepper** |  
+|-------------|---------|-----------|  
+| **Uniqueness** | Different per user | Same for all users |  
+| **Storage** | Stored in DB | Kept separately (e.g., env vars) |  
+| **Purpose** | Prevents rainbow tables(Precomputed table for caching the outputs of a cryptographic hash function) | Adds secret key protection | 
+
+## Why bcrypt is Preferred Over SHA for Password Hashing
+
+- A **BCrypt hash** typically looks like this:  
+```
+$2a$10$N9qo8uLOickgx2ZMRZoMy.E3B7FxtgTH9In0uWb3M..lZGdC5V6W.
+```
+Breaking it down:  
+- **`$2a$`** → Algorithm identifier (BCrypt version).  
+- **`10$`** → Cost factor (2^10 rounds).  
+- **`N9qo8uLOickgx2ZMRZoMy.`** → **The 22-character salt** (before the last `$`).  
+- **`E3B7FxtgTH9In0uWb3M..lZGdC5V6W.`** → The actual hashed password. 
+
+Based on the **Blowfish cipher**(Feistel Network (16 Rounds)) (BCrypt derive its key from `password + salt`), **bcrypt** is generally preferred over SHA (Secure Hash Algorithm) variants for password storage because it was specifically designed for password hashing, while SHA was designed for general cryptographic purposes. Here are the key reasons:
+
+### 1. Built-in Work Factor (Cost Factor)
+- bcrypt has an adjustable work factor that allows you to increase the computational cost as hardware improves
+- This makes it resistant to brute force attacks over time
+- SHA has no built-in way to adjust its computational complexity
+
+### 2. Salt Handling
+- bcrypt automatically generates and manages salts for each password
+- With SHA, you must manually implement salt generation and storage
+
+### 3. Resistance to GPU/ASIC Attacks
+- bcrypt's memory-intensive algorithm makes it harder to parallelize on GPUs or custom hardware
+- SHA algorithms (especially SHA-256/SHA-512) are easily accelerated with modern hardware
+
+
+### 4. Slower by Design
+- bcrypt is intentionally slow (a feature for password hashing)
+- SHA is designed to be fast, which is bad for password hashing
+
+
+For these reasons, security experts recommend **bcrypt** (or other password-specific hashing algorithms like **Argon2** or **PBKDF2**) over SHA variants for password storage.
