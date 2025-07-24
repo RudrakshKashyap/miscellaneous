@@ -30,11 +30,10 @@ Purpose of the SHA-256 Fingerprint
 - Allows humans or systems to uniquely identify a certificate without parsing its full contents.
 
 
-| **Field**     | **Value**  | **Description**                                                                                                |
+| **Field**     | **Value**  | **Description** |
 |-------------------------------|-------------------|----------------------------------------------------------------------------------------------------------------|
 | **Signature**                 | `30 45 02 20 38 06 CD B4 A1 E6 5C E4 30 80 DB 00 1A 10 B3 EF E3 19 34 FD BB E6 DB 5A 29 5D 50 54 03 4E 6D B8 02 21 00 98 49 DB 55 85 BE C9 5B AD E9 D5 2A 5A C8 46 BB F4 59 25 3D EA A8 AF 5D B2 A2 39 C4 98 D2 06 32` | Cryptographic signature by issuer                                                                              |
 | Signature Algorithm           | `SHA256 with ECDSA`                                                       | Hash + signing scheme used                                                                                     |
-| 
 | **Subject**                   |       |     |
 | Common Name (CN)              | `cheapsslsecurity.com`                                                    | Primary domain name covered by the certificate                                                                 |
 | **Issuer**                    |                                                                           |                                                                                                                |
