@@ -1,7 +1,7 @@
 A **nibble** is of 4 bits, and can be represented as 1 hexadecimal digit.
 
 
-## Big-Endian vs. Little-Endian
+## [Big-Endian vs. Little-Endian](https://youtu.be/CounrFEsOeA?si=G2pnKXjh-bN4enIA&t=376)
 
 - **Big-Endian**: The **most significant byte (MSB)** is stored at the **lowest memory address**.
 - **Little-Endian**: The **least significant byte (LSB)** is stored at the **lowest memory address**. Memonic -> LLL => Little Least Lowest
