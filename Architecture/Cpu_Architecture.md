@@ -99,9 +99,12 @@ They are the fastest form of storage in a computer system, much faster than RAM 
 
 A **word** is a fundamental unit of data that a CPU can process at once. It's the size of the data registers inside the CPU and influences the amount of memory that can be directly accessed. A 64-bit CPU has 64-bit wide registers. 
 
+<img src="https://miro.medium.com/1*PSTOKsqSfpKLxrFEr2BY2Q.png" width="35%" height="auto">
+
+
 | Register Type | Acronym | Primary Function |
 | :--- | :--- | :--- |
-| **Program Counter** | PC | Holds the memory address (**pointer**) of the **next instruction** to be fetched from memory. |
+| **Program Counter** | PC/IP | Holds the memory address (**pointer**) of the **next instruction** to be fetched from memory. |
 | **Instruction Register** | IR | Holds the **actual instruction** currently being decoded and executed. |
 | **Memory Address Register** | MAR | Holds the **address in memory** that the CPU wants to read from or write to. |
 | **Memory Buffer/Data Register** | MBR/MDR | Holds the **actual data** that has been read from or is about to be written to the memory address in the MAR. |
@@ -113,7 +116,9 @@ A **word** is a fundamental unit of data that a CPU can process at once. It's th
 | | **Sign Flag (S)** | Set to 1 if the result of an operation is negative. |
 | | **Overflow Flag (O)** | Set to 1 if an arithmetic overflow occurs (result is too large to be represented). |
 | **Stack Pointer** | SP | Points to the top of the **stack** (a special region of memory for temporary data and return addresses). |
-
+| **Shadow Registers** | Hidden | Temporary registers that are **not** part of the **programmer-visible** architecture. |
+| **Link Register** | LR (Arm) | Holds the address to return to when a subroutine call completes. |
+| **Task Register** | TR (x86) | Points to the current task's Task State Segment (TSS). |
 ---
 
 ### **2. Arithmetic Logic Unit (ALU)**

@@ -146,7 +146,6 @@ wlp1s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
 
 
 
-# socket programming L20
 
 # Popular routing protocols - L24 
 
