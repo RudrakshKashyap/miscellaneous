@@ -1,0 +1,1 @@
+[![](https://media.geeksforgeeks.org/wp-content/uploads/20250728165405585326/acid_properties.webp)](https://www.geeksforgeeks.org/dbms/acid-properties-in-dbms/)
