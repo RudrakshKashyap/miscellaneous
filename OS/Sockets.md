@@ -121,8 +121,11 @@ The kernel maintains several interconnected data structures. The most important 
 4.  **Protocol-Specific Tables**: The kernel maintains hash tables that map port numbers to their associated `struct sock` objects. This is critical for quickly finding which socket an incoming packet belongs to.
 
 ---
+<br />
+<br />
+<br />
 
-### The Journey in Kernel Memory
+# The Journey in Kernel Memory
 
 Here’s what happens step-by-step.
 
@@ -211,7 +214,7 @@ A typical client program does this:
     *   **Source IP Address:** The IP address of the outgoing network interface (e.g., your Wi-Fi or Ethernet IP, like `192.168.1.15`).
     *   **Source Port Number:** A random, unused **ephemeral port** (usually a high number like `54321`, `54322`, etc.). The OS chooses this automatically.
 
-So, the `connect()` call finalizes the complete socket pairing:
+ ## So, the `connect()` call finalizes the complete socket pairing:
 *   **Source:** `(Client's IP, Client's Ephemeral Port)`
 *   **Destination:** `(Server's IP, Server's Well-Known Port)` (e.g., `443` for HTTPS)
 
