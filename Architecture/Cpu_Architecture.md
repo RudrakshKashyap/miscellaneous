@@ -198,7 +198,10 @@ Let's trace a simple instruction `ADD [A], B` (Add the value in memory location 
 
 5.  The cycle repeats, fetching the next instruction from the address now in the PC.
 
-
+---
+<br />
+<br />
+<br />
 
 # [CPU Visual Simulator](https://cpuvisualsimulator.github.io/)
 # [CPU Visual Simulator](https://tinycpu.com/coredumped)

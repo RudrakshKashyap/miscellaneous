@@ -1,0 +1,122 @@
+## **For almost all practical, user-space programming, a [SOCKET](../OS/Sockets.md) is the mandatory interface to send a packet over a network. It is the fundamental abstraction provided by the operating system for network communication.**
+
+### The Exceptions and "Without Socket" Scenarios
+**Kernel-Bypass Technologies** (e.g., DPDK, RDMA)
+
+Technologies like **Data Plane Development Kit (DPDK)** or **RDMA (Remote Direct Memory Access)** are designed for extreme high-performance networking (think telecom core networks, high-frequency trading). <br />
+**No OS Involvement:** The data path completely bypasses the kernel's TCP/IP stack and its socket interface. This eliminates context switches and copies, drastically reducing latency.
+
+# WebSockets
+
+## Concept
+For every packet we need to send, it is going to be through a socket. Once we create a TCP/UDP socket, we can send our packets. Generally when we send a packet it will be in HTTP format, but we can send `Upgrade: websocket header` in HTTP packet and choose to change protocol(structure of packet) to `WebSocket`, now our packets will be sent as websocket format and there will be no unnecessary headers of HTTP packets. Also now this socket will be open for a longer period of time and not be closed shortly. That's it we are not using websockets.
+
+The only thing to note is that for QUIC we use UDP socket, but for `WebSocket` protocol we can only use TCP socket. You can't make WebSockets *itself* use UDP for the same reason you can't make a diesel car run on pure gasoline—its engine is built for a different fuel. **WebSockets *is* a TCP protocol.**
+
+
+
+### So, What's the WebSocket-like Alternative over UDP?
+
+**WebTransport and WebRTC DataChannels can offer reliability as an option**, but you have to choose it. For applications that need these guarantees, you're essentially rebuilding TCP on top of UDP, which negates many of the benefits of using UDP in the first place. <br />
+We still use WebSockets because for most applications—like chat, dashboard updates, notifications, and collaborative editing—**reliability and simplicity are far more important than shaving off milliseconds of latency.** 
+
+The web platform is already moving in this direction with two key technologies:
+
+1.  **WebTransport:** This is a new browser API that provides a modern, flexible way for web apps to communicate with servers using both reliable (like TCP) and unreliable (like UDP) streams, all built on top of QUIC and HTTP/3. It's essentially designed to be the successor for many use cases where WebSockets are used today, offering better performance and more flexibility.
+2.  **WebRTC(Web Real-Time Communication) Data Channels:** This is another API that allows peer-to-peer bidirectional communication of arbitrary data directly between browsers (or a browser and a server). It uses the SCTP protocol, which can be configured for either reliable or unreliable transmission, and runs over UDP.
+
+
+## **Case (HTTP/3 over QUIC)**
+*   You visit `https://example.com`. Your browser opens a **UDP** socket and establishes a QUIC connection (HTTP/3).
+*   The page JavaScript calls `new WebSocket("wss://example.com/chat")`.
+*   The browser recognizes that WebSockets are not supported over QUIC.
+*   The browser opens a **brand new TCP connection** to `example.com`.
+*   Over this new TCP connection, it performs a standard HTTP/1.1(why not http2 -> simple, "just make it work", every device supports it, safebet) `Upgrade` handshake.
+*   The server agrees. The WebSocket runs on this **newly created TCP socket**. The original QUIC connection remains open for other HTTP resources.
+
+
+<br />
+<br />
+<br />
+
+# How it Works (Client-Server Exchange):
+
+**Step 1: Client Handshake Request**
+The client sends a standard HTTP GET request with special headers.
+
+```http
+GET /chat HTTP/1.1
+Host: server.example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==  // (A random, base64-encoded 16-byte value)
+Sec-WebSocket-Version: 13
+Origin: http://example.com
+```
+
+*   **`Upgrade: websocket` & `Connection: Upgrade`**: These tell the server the client wants to switch protocols from HTTP to WebSocket.
+*   **`Sec-WebSocket-Key`**: A random key provided by the client to prevent proxy caching and ensure it's a true WebSocket handshake.
+*   **`Sec-WebSocket-Version`**: The protocol version (13 is the current, standardized version).
+
+**Step 2: Server Handshake Response**
+If the server supports WebSockets and accepts the request, it responds with an HTTP 101 Switching Protocols response.
+
+```http
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=  // (The client's key, transformed)
+```
+
+*   **`HTTP/1.1 101 Switching Protocols`**: Confirms the protocol switch.
+*   **`Sec-WebSocket-Accept`**: This is the proof that the server understands the WebSocket protocol. It's generated by:
+    1.  Taking the client's `Sec-WebSocket-Key` (e.g., `dGhlIHNhbXBsZSBub25jZQ==`).
+    2.  **Concatenating** it with a special GUID (Globally Unique Identifier): `258EAFA5-E914-47DA-95CA-C5AB0DC85B11`.
+    3.  Taking the **SHA-1 hash** of the resulting string.
+    4.  Encoding the hash in **base64**.
+
+If the client receives the correct `Sec-WebSocket-Accept` value, it knows the handshake was successful. After this, the TCP connection remains open, and both parties can start sending data using the **WebSocket Framing Protocol**. The HTTP conversation is over.
+
+| Feature | WebSocket | HTTP/3 (over QUIC) |
+| :--- | :--- | :--- |
+| **Communication Model** | **Full-duplex, bidirectional** from an open connection. True server push. | **Request-Response** (with server push for anticipated resources). |
+| **Connection** | Single, long-lived **TCP** connection. | Built on **QUIC**, which runs over UDP. Handles multiplexing and mobility better. |
+| **Overhead** | **Very low** after handshake. Tiny frame headers (2-14 bytes) per message. | **Higher per request.** Each stream has headers (HPACK-compressed in HTTP/3, but still present). |
+| **Latency** | **Very low** for messages. No setup time after connection is open. | Lower than HTTP/1/2, but still requires a stream to be initiated. Higher than WebSocket for frequent small messages. |
+| **Use Case** | **Real-time, interactive** applications. Chat, live feeds, multiplayer games, collaborative tools. | **Traditional web content,** API calls, website loading. Efficient for many parallel requests. |
+| **State** | **Stateful.** The connection is a continuous session. | **Stateless.** Each request/response pair is independent, though QUIC connections are stateful at the transport layer. |
+
+
+### Key Technical Differences
+
+1.  **Underlying Transport:**
+    *   **WebSocket** is built directly on **TCP**. It inherits TCP's properties: reliable, ordered delivery. However, it can also inherit TCP's head-of-line blocking if multiple messages are sent in sequence.
+    *   **HTTP/QUIC** uses **QUIC as its transport layer**, which runs on **UDP**. QUIC builds its own reliability and security (TLS 1.3 is mandatory) on top of UDP. A key advantage is that QUIC streams are independent; packet loss in one stream doesn't block others (removes head-of-line blocking).
+
+2.  **Data Framing:**
+    *   **WebSocket** uses its own lightweight **binary framing protocol** (as described in your previous question).
+    *   **HTTP/QUIC** uses **HTTP Semantics** (headers, methods) framed within **QUIC streams**.
+
+3.  **Connection Migration:**
+    *   **WebSocket over TCP:** If your phone switches from WiFi to cellular (changing IP address), the TCP connection breaks. You must re-establish the WebSocket connection, causing disruption.
+    *   **HTTP/QUIC:** Designed with **connection migration**. A QUIC connection is identified by a Connection ID, not the IP address. If your network changes, the connection can seamlessly continue, which is a huge advantage for mobile devices.
+
+---
+
+### Why "Switch" to WebSocket? It's Not a Replacement.
+
+This is the crucial point: **You don't "switch" from HTTP to WebSocket. You use them together for different purposes.**
+
+Think of them as different tools in a toolbox:
+
+*   **HTTP/QUIC is for loading the application.**
+    *   You use HTTP/QUIC to load the HTML, JavaScript, CSS, and images of your web page or app.
+    *   You use HTTP/QUIC for API calls where a request-response pattern is perfect (e.g., loading user data, submitting a form, searching).
+
+*   **WebSocket is for the real-time functionality *within* the application.**
+    *   Once your chat app is loaded via HTTP, you open a WebSocket connection to receive new messages instantly.
+    *   Once your live sports dashboard is loaded, you open a WebSocket connection to receive score updates the moment they happen.
+
+### When to Use WebSocket (The "Why")
+
+You use WebSocket **when the request-response model of HTTP is too slow or too inefficient.** This is typically when the server needs to send data to the client **without the client asking for it first.**

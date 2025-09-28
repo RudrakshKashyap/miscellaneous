@@ -19,6 +19,17 @@
 </a>
 
 
+# B-Tree vs. B+Tree Page Structure (only for rowstore indexed table)
+
+*   **B-Tree (Theoretical Structure):** In a classic B-Tree, *any* node (page) can contain both keys and the actual data record (or a pointer to it). This means there is no structural distinction between an "index page" and a "data page" at the page level; they are the same thing. However, **most modern database indexes are not pure B-Trees; they are B+Trees.**
+
+*   **B+Tree (Practical Implementation):** This is what databases like MySQL (InnoDB), PostgreSQL, and SQL Server use. The B+Tree has a critical design feature:
+    *   **Index Pages (Non-Leaf Pages):** These pages **only contain index keys and pointers** to other pages (either lower-level index pages or leaf pages). They do not contain the actual table data.
+    *   **Leaf Pages:** These pages have a very specific purpose that depends on the type of index.
+
+So, for a **B+Tree**, yes, the index pages (the root and intermediate levels) are physically different in content and purpose from the leaf pages.
+
+
 ## 1. Rowstore Heap (just the name is heap, nothing like heap)
 
 A heap is a collection of data pages with no logical ordering. Pages are not linked in sorted order, but are connected via the IAM (Index Allocation Map).
@@ -49,7 +60,7 @@ A heap is a collection of data pages with no logical ordering. Pages are not lin
 
 ## 2. Rowstore Clustered Index
 
-The data pages themselves are the leaf level of the B+ tree and are stored in sorted order. Pages are doubly-linked for efficient range scans.
+**The data pages themselves are the leaf level of the B+ tree** and are stored in sorted order. Therefore, **the leaf page of a clustered index *is* the data page**. Pages are doubly-linked for efficient range scans.
 
 
 **Data Page (Leaf Level) Diagram:**
@@ -76,9 +87,9 @@ The data pages themselves are the leaf level of the B+ tree and are stored in so
 
 ## 3. Rowstore Non-Clustered Index
 
-The leaf pages of a non-clustered index contain the index key columns and a pointer (a Row ID or the Clustered Index Key) back to the full data row.
+The leaf pages of a non-clustered index contain the index key columns and a pointer (a Row ID or the Clustered Index Key) back to the full data row. B+ trees are used.  In a Rowstore Non-Clustered Index, the format of pages for internal nodes, leaf nodes, and actual data pages are **all different** because they serve different purposes in the B+Tree structure.
 
-**Data Page (Leaf Level) Diagram:**
+**Index Page (Leaf Level) Diagram:**
 ```+=======================================================================================+
 |                                    Page Header                                        |
 | (Page Type: INDEX, Index ID: YourIndexID, Level: 0, Pointer to next/prev page, etc.) |
@@ -101,14 +112,16 @@ The leaf pages of a non-clustered index contain the index key columns and a poin
 **Key Characteristics:**
 *   **Sorted Index Keys:** The index keys(**only selected columns**) are stored in sorted order, but the actual data rows are not.
 *   **The Pointer:**
-    *   If the base table is a **heap**, the pointer is a **Row ID (RID)** – a direct physical address (File #:Page #:Slot #).
-    *   If the base table has a **clustered index**, the pointer is the **Clustered Index Key** of that row. This is why having a narrow clustered key is important. **If it stored a direct physical pointer, every time the data row moved (which happens frequently), every single non-clustered index on the table would need to be updated**. This would be catastrophically expensive.
+    *   If the base table is a **heap**, the pointer is a **Row ID (RID)** – a direct physical address (File #:Page #:Slot #). Where Page is the actual data page. But we dont need the whole page bc we already know slot and can direct point to the actual row in disk.
+    *   If the base table has a **clustered index**, the pointer is the **Clustered Index Key** of that row(so *not actually a pointer*, it is the value of clustered key). This is why having a narrow clustered key is important. **If it stored a direct physical pointer, every time the data row moved (which happens frequently), every single non-clustered index on the table would need to be updated**. This would be catastrophically expensive.
 
 ---
 
 ## 4. Columnstore Clustered Index
 
 This is the physical structure of the entire table. Data is grouped into rowgroups, and each column is compressed and stored separately.
+
+Generally, columnstore indexes **do not** use B-trees.
 
 ### NOTE - When a row group is compressed (either by a bulk load operation or the Tuple Mover process), it takes a *set of complete rows* and processes them. Hence, all of the column data sections in a row group will contain same amount of rows. ofcource that means that let's say column1 data section is very big compare to column2 data section in a particular LOB(large object) page.
 
@@ -133,16 +146,22 @@ This is the physical structure of the entire table. Data is grouped into rowgrou
 ```
 **Inside a Column Segment:**
 The segment metadata is crucial for performance.
-```
-+----------------------------------------------------------------+
-|                   Column Segment (e.g., Amt Column)            |
-+---------+-----------+-------------+-----------+----------------+
-| Segment | Dictionary| Value       | Bitpacked | NULL /         |
-| Header  | (for      | Compression | Data      | Run-Length     |
-| (Min val,| low-card | (e.g.,      |           | Encoding       |
-| Max val,| columns)  | 10, 20, 30) |           |                |
-| # values)|          |             |           |                |
-+---------+-----------+-------------+-----------+----------------+
+```+-----------------------------------------------------------------------------------------+
+|                                **Column Segment (Logical)**                             |
+|  (e.g., Amt Column for 1M rows)                                                         |
+|                                                                                         |
+|  +--------------------------+  +--------------------------+  +------------------------+ |
+|  | **Segment Metadata Page** |  |     **LOB Page 1**       |  |     **LOB Page 2**      | |
+|  | (8 KB, Standard Page)     |  | (8 KB, Type = "LOB")     |  | (8 KB, Type = "LOB")    | |
+|  |                           |  |                          |  |                        | |
+|  | - ID of the segment       |  | - Chunk of the compressed|  | - Next chunk of the    | |
+|  | - Min/Max values          |  |   column data.           |  |  compressed data.      | |
+|  | - Number of rows          |  | - This is the actual     |  | - And so on...         | |
+|  | - Compression type        |  |   "Amt" values for       |  |                        | |
+|  | - **Pointer to LOB Page 1** |  |   hundreds of thousands |  |                        | |
+|  +--------------------------+  +--------------------------+  +------------------------+ |
+|                                                                                         |
++-----------------------------------------------------------------------------------------+
 ```
 **Key Characteristics:**
 *   **RowGroups:** The fundamental unit of storage. Each is a clustered index "page" containing ~1M rows.
@@ -152,6 +171,8 @@ The segment metadata is crucial for performance.
 ---
 
 ## 5. Columnstore Non-Clustered Index
+
+In a non-clustered columnstore index, the base table might be a **B-tree**(if not Heap). 
 
 This is a secondary columnstore structure built on top of a traditional rowstore table. The data exists in two complete, separate formats. No link between these 2. you have to run same query on both seperatly.
 
@@ -165,49 +186,39 @@ This is a secondary columnstore structure built on top of a traditional rowstore
 | [Page 2]: (OrderID:102, CustID:88, Amt:$50) |  | | (Compressed)| | (Compressed)|      |
 +---------------------------------------------+  | +-------------+ +-------------+      |
                                                  +---------------------------------------+
-
-
-+=======================================================================================+
-|                                    Page Header                                        |
-| (Page Type: COLUMNSTORE, Object ID, Column ID, Segment Metadata, etc.)               |
-+===========================================+===========================================+
-|                 Metadata Section          |               Data Section                |
-|                                           |                                           |
-| - Segment ID                              |  +-------------------------------------+  |
-| - Row Count (e.g., 1000 rows)             |  |  Column 1 Value Dictionary          |  |
-| - Min Value (Col1)                        |  |  [ValueID -> Actual Value]          |  |
-| - Max Value (Col1)                        |  |  0 -> "Type A"                      |  |
-| - Min Value (Col2)                        |  |  1 -> "Type B"                      |  |
-| - Max Value (Col2)                        |  |  2 -> "Type C"                      |  |
-| - Encoding Type                           |  +-------------------------------------+  |
-| - Compression Information                 |                                           |
-|                                           |  +-------------------------------------+  |
-|                                           |  |  Column 2 Value Dictionary          |  |
-|                                           |  |  [ValueID -> Actual Value]          |  |
-|                                           |  |  0 -> 100                           |  |
-|                                           |  |  1 -> 200                           |  |
-|                                           |  |  2 -> 300                           |  |
-|                                           |  +-------------------------------------+  |
-|                                           |                                           |
-|                                           |  +-------------------------------------+  |
-|                                           |  |  Column 1 Data (Compressed)         |  |
-|                                           |  |  [Row1: ValueID, Row2: ValueID, ...]|  |
-|                                           |  |  0,1,0,2,1,0,1,2,...               |  |
-|                                           |  +-------------------------------------+  |
-|                                           |                                           |
-|                                           |  +-------------------------------------+  |
-|                                           |  |  Column 2 Data (Compressed)         |  |
-|                                           |  |  [Row1: ValueID, Row2: ValueID, ...]|  |
-|                                           |  |  1,0,2,1,0,2,1,0,...               |  |
-|                                           |  +-------------------------------------+  |
-|                                           |                                           |
-|                                           |  +-------------------------------------+  |
-|                                           |  |  Row Group Metadata                 |  |
-|                                           |  |  - Row IDs mapping                 |  |
-|                                           |  |  - Deleted rows bitmap             |  |
-|                                           |  +-------------------------------------+  |
-+===========================================+===========================================+
 ```
+```mermaid
+flowchart TD
+    subgraph RG1 [Row Group #1 up to 1,048,576 rows]
+        direction TB
+        
+        subgraph CS1 [Column Segment Col1]
+            Meta1[Metadata<br/>min=10, max=100<br/>rowcount=1M<br/>hasNulls=false<br/>compression=Dictionary]
+            Meta1 --> DictPtr1[Pointer to<br/>Dictionary LOB pages]
+            Meta1 --> DataPtr1[Pointer to<br/>Data LOB pages]
+        end
+
+        subgraph CS2 [Column Segment Col2]
+            Meta2[Metadata<br/>min=A, max=Z<br/>rowcount=1M<br/>hasNulls=false<br/>compression=Dictionary]
+            Meta2 --> DictPtr2[Pointer to<br/>Dictionary LOB pages]
+            Meta2 --> DataPtr2[Pointer to<br/>Data LOB pages]
+        end
+    end
+
+    %% Physical Storage for Col1
+    DictPtr1 --> DictLOB1[Dictionary LOB Pages<br/>ValueID → Actual Value<br/>0 → 10<br/>1 → 15<br/>2 → 27<br/>...<br/>n → 100]
+    
+    DataPtr1 --> DataLOB1[Data LOB Pages<br/>Compressed Bit Packed Values<br/>0,1,2,0,3,1,...<br/>ValueIDs not actual values]
+
+    %% Physical Storage for Col2  
+    DictPtr2 --> DictLOB2[Dictionary LOB Pages<br/>ValueID → Actual Value<br/>0 → A<br/>1 → C<br/>2 → M<br/>...<br/>n → Z]
+    
+    DataPtr2 --> DataLOB2[Data LOB Pages<br/>Compressed Bit Packed Values<br/>2,0,1,3,0,2,...<br/>ValueIDs not actual values]
+```
+
+
+
+
 **Key Characteristics:**
 * **No Direct Pointers: Unlike rowstore indexes, columnstore doesn't store direct pointers to rows. Instead, it uses row group metadata and positional information.**
 *   **Dual Storage:** The data is stored **twice**. The base rowstore table handles transactional operations (single-row `INSERT`/`UPDATE`/`DELETE`).

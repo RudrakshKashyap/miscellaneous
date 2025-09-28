@@ -19,7 +19,6 @@ The short answer is:
 Let's break this down.
 
 ### 1. The Core Misconception: Virtual Memory is a Concept, Not a Mechanism
-…rules. |
 
 You cannot have the security and stability of a multi-programming OS without the hardware mechanism. The kernel itself is just software; a rogue process could simply overwrite the kernel's memory if there were no hardware boundary. The hardware is the ultimate authority that ensures the kernel's rules are followed.
 ![](../Images/i8.png)

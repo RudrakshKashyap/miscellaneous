@@ -15,6 +15,25 @@
 
 
 # [Threads](https://www.youtube.com/watch?v=M9HHWFp84f0&list=PL9vTTBa7QaQPdvEuMTqS9McY-ieaweU8M&index=5)
+
+In the Linux kernel, every single unit of execution—whether you think of it as a process or a thread—is represented by a data structure called **`struct task_struct`**.
+
+*   When you start a program, the kernel creates a `task_struct` for it.
+*   When that program creates a new thread, the kernel creates *another* `task_struct`.
+
+So, at the kernel level, there is no fundamental difference in how it represents a "process" versus a "thread." They are all just **tasks** (or schedulable entities).
+Here's the simple rule:
+*   **For the first task in a process (the "main thread"), the PID and the TGID are the same number.**
+*   **When a new thread is created, it gets its own new, unique PID. However, it *inherits the TGID* from the task that created it.**
+
+From the user's perspective, there is one process, `myapp`, with PID 4000. The kernel, however, sees three `task_struct`s with PIDs 4000, 4001, and 4002, all grouped together by their shared TGID of 4000.
+
+| User's View (`ps -ef`) | Kernel's View (`ps -eLf`) |
+| :--------------------- | :-------------------------------- |
+| `PID=4000, myapp`      | `PID=4000 (main thread), TGID=4000` |
+|                         | `PID=4001 (thread-1), TGID=4000`    |
+|                         | `PID=4002 (thread-2), TGID=4000`    |
+
 ![](../Images/i14.png)
 ![](../Images/i15.png)
 ![](../Images/i16.png)
@@ -280,62 +299,3 @@ Let's trace `LOCK INC [value]` on a dual-core system. Assume `value` is initiall
 *   **It's About Cache Lines:** The lock is applied to a specific cache line, not the whole system.
 *   **Coherence Protocol is Key:** The MESI protocol ensures all cores have a consistent view of memory by controlling the state of cache lines.
 *   **Performance Cost:** Atomic operations are expensive because they require invalidating caches on other cores and communicating over the shared bus. This is why minimizing shared data in concurrent programming is so critical for performance.
-
-# [File access](https://www.youtube.com/watch?v=rW_NV6rf0rM)
-
-![](../Images/i18.png)
-
-### 1. File Descriptor (fd) Table (Per-Process in PCB)
-
-This is a table that **each process** has uniquely for itself. It's the process's interface to accessing files.
-
-*   **Purpose:** To keep track of which files this specific process has open.
-*   **Contents:** An array of integers (the file descriptors: 0, 1, 2, 3...). Each entry is simply a pointer (or an index) to an entry in the global **Open File Table**.
-*   **Key Point:** The same file descriptor number (e.g., `3`) in two different processes point to *different entries* in the Open File Table (and thus potentially different files), unless they are related (e.g., after a `fork()`).
-
-**Example:** When a process calls `open("myfile.txt", O_RDONLY)`, the OS:
-1.  Finds the file's i-node.
-2.  Creates an entry in the **Open File Table**.
-3.  Finds the smallest free number in the process's **fd table** (say, `3`).
-4.  Makes entry `3` point to the new Open File Table entry.
-5.  Returns the integer `3` (the file descriptor) to the process. The process then uses `3` in subsequent `read()`, `write()`, and `close()` calls.
-
-
-
----
-
-### 2. Open File Table (System-Wide)
-
-This is a single table maintained by the operating system kernel, shared by all processes.
-
-*   **Purpose:** To maintain the state of every open file in the system. Each entry is called an **open file description**.
-*   **Contents:** Each entry contains crucial information about *how* a file is being accessed:
-    *   A pointer to the **vnode/i-node table** entry for the actual file.
-    *   The **current file offset** (where the next read/write will occur).
-    *   The **access mode** (read-only, write-only, etc.).
-    *   The **status flags** (e.g., blocking/non-blocking).
-    *   **Reference count**: The number of file descriptors (from any process) that point to this open file description.
-*   **Key Point:** This is where the magic of **shared file offsets** happens. If two file descriptors (even from different processes) point to the *same* Open File Table entry, they share the same file offset.
-
-**Example:** After a `fork()`, the child process inherits copies of the parent's file descriptors. The fd `3` in both the parent and child point to the *same* Open File Table entry. A `read()` by the parent will advance the file offset, so the child's subsequent `read()` will continue from where the parent left off.
-
-
-
----
-
-### 3. Vnode / I-node Table (System-Wide)
-
-This table is also global and contains the essential, persistent metadata about the file itself, *not* about how it's being accessed.
-
-*   **Vnode vs. I-node:** A **vnode** (virtual node) is a generic interface that abstracts different file systems. An **i-node** (index node) is the specific data structure used by traditional Unix file systems (like ext4, UFS). The vnode table contains entries that often wrap an underlying i-node.
-*   **Purpose:** To act as the central repository of information for every open file and directory in the system.
-*   **Contents:** Information directly from the file system on disk:
-    *   **File type** (regular, directory, symbolic link, etc.)
-    *   **Permissions** (read, write, execute for user, group, others)
-    *   **File size**
-    *   **Ownership** (User ID and Group ID)
-    *   **Timestamps** (creation, modification, access)
-    *   **Pointers to the actual data blocks** on the disk where the file content is stored.
-    *   **Reference count**: The number of Open File Table entries and directory entries that point to this vnode/i-node.
-
-**Key Point:** There is only one vnode/i-node table entry per file, regardless of how many processes have it open. This is the "source of truth" for the file's properties.
