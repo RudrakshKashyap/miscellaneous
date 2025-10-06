@@ -97,7 +97,3 @@ This approach combines the scalability and reliability of stateless architecture
 <br />
 <br />
 <br />
-
-
-
-# [REpresentational State Transfer (REST)]()

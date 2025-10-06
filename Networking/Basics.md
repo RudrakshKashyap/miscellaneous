@@ -23,7 +23,7 @@ Address                  HWtype  HWaddress           Flags Mask     Iface
 reliance.reliance        ether   b4:a7:c6:fc:c3:69   C              wlp1s0
 ```
 - **MAC(Media Access Control) Address Table (Switch Table):** Used by switches to map MAC addresses to switch ports.
-- **NAT(Network Address Translation) Table:** A NAT (Network Address Translation) table is a critical component that enables multiple devices on a private network to share a single public IP address when communicating with the internet. This translation mechanism is fundamental to modern networking, helping conserve IPv4 addresses while providing basic security through obscurity.
+- **[NAT(Network Address Translation) Table:](https://www.youtube.com/playlist?list=PLIFyRwBY_4bQ7tJvbLA9A0v8Fq9l-H923)** A NAT (Network Address Translation) table is a critical component that enables multiple devices on a private network to share a single public IP address when communicating with the internet. This translation mechanism is fundamental to modern networking, helping conserve IPv4 addresses while providing basic security through obscurity.
 
 ## Broadcast vs Multicast
 | Feature          | Broadcast (IPv4 exclusive)                         | Multicast                          |  

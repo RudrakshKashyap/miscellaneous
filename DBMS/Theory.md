@@ -19,16 +19,6 @@
 </a>
 
 
-# B-Tree vs. B+Tree Page Structure (only for rowstore indexed table)
-
-*   **B-Tree (Theoretical Structure):** In a classic B-Tree, *any* node (page) can contain both keys and the actual data record (or a pointer to it). This means there is no structural distinction between an "index page" and a "data page" at the page level; they are the same thing. However, **most modern database indexes are not pure B-Trees; they are B+Trees.**
-
-*   **B+Tree (Practical Implementation):** This is what databases like MySQL (InnoDB), PostgreSQL, and SQL Server use. The B+Tree has a critical design feature:
-    *   **Index Pages (Non-Leaf Pages):** These pages **only contain index keys and pointers** to other pages (either lower-level index pages or leaf pages). They do not contain the actual table data.
-    *   **Leaf Pages:** These pages have a very specific purpose that depends on the type of index.
-
-So, for a **B+Tree**, yes, the index pages (the root and intermediate levels) are physically different in content and purpose from the leaf pages.
-
 
 ## 1. Rowstore Heap (just the name is heap, nothing like heap)
 
