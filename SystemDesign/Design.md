@@ -31,7 +31,7 @@ A well-designed modular monolith is an excellent stepping stone. It allows you t
 
 ### Key Communication Styles
 
-*   **Pub/Sub (Publish-Subscribe):** An event is broadcast to *all* consumers who have subscribed to that event type. The producer doesn't know who the consumers are.
+*   **Pub/Sub (Publish-Subscribe):** An event is broadcast to *all* consumers who have subscribed to that event type. The producer doesn't know who the consumers are. Event is gone once consumed, we dont keep it.
     
 *   **Event Streaming:** Events are written to a log (a stream). Consumers can read from this log at their own pace and are not limited to just new events; they can replay past events.
 
@@ -51,7 +51,7 @@ A well-designed modular monolith is an excellent stepping stone. It allows you t
 
 
 
-| Feature       | RabbitMQ                                | Kafka                           |
+| Feature       | RabbitMQ                                | [Kafka](./Tools/Kafka.md#kafka)                           |
 | ------------- | --------------------------------------- | ------------------------------- |
 | Type          | Message broker (push)                   | Event log (pull-based)          |
 | Typical usage | Real-time async processing, work queues | Event streaming, data pipelines |
@@ -62,3 +62,24 @@ A well-designed modular monolith is an excellent stepping stone. It allows you t
 # [RabbitMQ](https://www.cloudamqp.com/blog/part1-rabbitmq-for-beginners-what-is-rabbitmq.html)
 
 ![](https://www.cloudamqp.com/img/blog/exchanges-topic-fanout-direct.png)
+
+<br />
+<br />
+<br />
+
+---
+
+# Leader election
+
+Leader election is a fundamental concept in distributed systems where a group of nodes selects a single leader to coordinate tasks, ensuring order and consistency . Different algorithms and tools have been developed to solve this problem, each with its own strengths and trade-offs.
+
+The table below summarizes some of the most prominent leader election algorithms and the tools that implement them.
+
+| **Algorithm/Mechanism** | **How It Works** | **Key Tools & Systems That Use It** |
+| :--- | :--- | :--- |
+| **Bully Algorithm**  | The node with the highest unique ID wins. Nodes challenge others with higher IDs; if no response, they declare themselves leader. | |
+| **Ring Algorithm**  | Nodes are logically arranged in a ring. An election message is passed; the node with the highest ID in the message becomes leader. | |
+| **[Raft Consensus Algorithm](https://www.youtube.com/watch?v=IujMVjKvWP4&pp=ygUOcmFmdCBhbGdvcml0aG0%3D)**  | Nodes use randomized timeouts to become candidates and request votes. A node that receives a majority of votes becomes the leader. | **etcd** , **Consul**, **CockroachDB**  |
+| **Paxos & Multi-Paxos**  | A node becomes leader by having its proposal accepted by a quorum (majority) of nodes. | |
+| **ZooKeeper (ZAB Protocol)**  | Uses ephemeral sequential znodes. The node with the lowest sequence number is the leader. Watches notify the next node if the leader fails. | **Apache ZooKeeper** , **Kafka** (via ZooKeeper)  |
+| **Lease-based Election**  | A leader acquires a lease (lock) from a shared database. It maintains leadership by periodically renewing the lease (heartbeating). | **Amazon DynamoDB** , **Apache ZooKeeper** , **Kinesis Client Library (KCL)**  |

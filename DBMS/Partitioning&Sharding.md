@@ -260,4 +260,4 @@ The solution is **Virtual Nodes**.
     array of pairs `{hash("server_1_a"), "server_1"}` and do `lower_bound(hash(key))` on it
     to get where should a key belong.
 - Each shard can efficiently query its local database: "SELECT * WHERE key_hash BETWEEN X AND Y"
-- Modern **distributed databases**(eg- cockroachDB) often store the key_hash alongside the data for exactly this purpose. For SQL databases you would need to store shard_hash in a column.
+- Modern **distributed databases**(eg- [cockroachDB](https://www.youtube.com/watch?v=ecvyqXtq2mY) - provides auto sharding + [RAFT](https://youtu.be/ro2fU8_mr2w?si=EKDUQ2lulNz7qFnh)) often store the key_hash alongside the data for exactly this purpose. For SQL databases you would need to store shard_hash in a column.
