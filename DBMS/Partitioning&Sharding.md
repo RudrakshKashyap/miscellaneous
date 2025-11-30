@@ -151,7 +151,7 @@ this improves parallelism and reduces contention.
 
 
 
-## 🗂️ How Virtual Bucket Sharding Works - A type of directory based sharding
+##  How Virtual Bucket SHARDING Works - A type of directory based sharding
 
 Virtual bucket sharding introduces a two-level mapping process that decouples data from physical shards.
 

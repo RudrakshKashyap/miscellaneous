@@ -83,3 +83,59 @@ The table below summarizes some of the most prominent leader election algorithms
 | **Paxos & Multi-Paxos**  | A node becomes leader by having its proposal accepted by a quorum (majority) of nodes. | |
 | **ZooKeeper (ZAB Protocol)**  | Uses ephemeral sequential znodes. The node with the lowest sequence number is the leader. Watches notify the next node if the leader fails. | **Apache ZooKeeper** , **Kafka** (via ZooKeeper)  |
 | **Lease-based Election**  | A leader acquires a lease (lock) from a shared database. It maintains leadership by periodically renewing the lease (heartbeating). | **Amazon DynamoDB** , **Apache ZooKeeper** , **Kinesis Client Library (KCL)**  |
+
+
+# Some Scenerios in Raft
+
+- New leader replicates its log to establish authority
+- During replication, followers accept or reject entries based on log consistency
+- The replication outcome naturally reveals which old entries were on a majority
+- Committed entries are preserved; uncommitted ones are overwritten
+
+## 1. Leader Commits an Entry and Crashes Before Followers Commit
+
+### Scenario Breakdown
+1.  A **Leader** receives a log entry from a client.
+2.  The Leader appends the entry to its own log.
+3.  The Leader sends **AppendEntries RPCs** to the **Followers**.
+4.  The Leader receives successful responses from a **majority** of the Followers (e.g., 2 out of 3 servers).
+5.  Based on the responses from the majority, the Leader **commits** the entry and applies it to its state machine (it may also send a success response to the client at this point).
+6.  ***Crash Point:*** Before the Leader can send the next AppendEntries RPC, which would inform the remaining **minority** of Followers (or any lagging Followers) of the new commit index, the Leader **crashes**.
+
+### Raft's Safety Mechanism
+
+Raft guarantees that this committed entry will **not be lost** and will eventually be applied by *all* servers.
+
+* **Electing a New Leader:** A new leader election is triggered. A new Leader will only be elected if it is **up-to-date** enough to contain **all committed entries**. Since the crashed Leader had the committed entry, and it had replicated it to a **majority** of servers, at least **one** of the servers in that majority must participate in the election (because any majority set overlaps with any other majority set, including the set of all servers).
+* **Log Consistency:** The new Leader's $\text{AppendEntries}$ RPCs will force the minority/lagging Followers to **become consistent** with its log.
+    * The new Leader sends the committed entry to the lagging Followers.
+    * Once a lagging Follower receives an $\text{AppendEntries}$ RPC from the new Leader with a $\text{LeaderCommit}$ index greater than the Follower's current $\text{CommitIndex}$, the Follower commits and applies the entry.
+
+**Conclusion:** The committed entry is **safe** because it existed on a majority of servers before the crash. The new Leader, being one of the majority, will use its log to **force consistency** across the cluster. 
+
+---
+
+## 2. Leader Fails an Entry Write, Tells Client Failure, and Crashes Before Telling Follower
+
+### Scenario Breakdown
+1.  A **Leader** receives a log entry from a client.
+2.  The Leader appends the entry to its own log.
+3.  The Leader sends $\text{AppendEntries}$ RPCs to the **Followers**.
+4.  The Leader **fails** to get a response from a **majority** of Followers (e.g., Follower A and Follower B crash, but Follower C is up).
+5.  The Leader **determines the write failed** and sends a **failure response** to the client. The entry is **uncommitted** and **unapplied**.
+6.  ***Crash Point:*** Before the Leader can send the *next* $\text{AppendEntries}$ RPC or heartbeat to a specific follower (say Follower C, which had already received and stored the uncommitted entry), the Leader **crashes**.
+
+### Raft's Safety Mechanism
+
+The entry in question is **uncommitted** and must not be applied to the state machine. Raft ensures this uncommitted entry is either committed by the new leader or **deleted**.
+
+* **Electing a New Leader:** A new Leader is elected.
+* **Log Consistency and Rollback:** The new Leader may or may not have this uncommitted entry.
+    * **Case A: The new Leader *does not* have the uncommitted entry.** The new Leader's log is **shorter** or **conflicts** with the log of the Follower (Follower C) that *does* have the uncommitted entry. The $\text{AppendEntries}$ RPC from the new Leader will use the **Log Matching Property** (matching $\text{term}$ and $\text{index}$) to find the point of divergence. The new Leader will force the Follower (Follower C) to **rollback** its log, deleting the uncommitted entry.
+    * **Case B: The new Leader *does* have the uncommitted entry.** This can happen if the original Leader crashed, but was elected again (unlikely but possible), or if the new Leader's log is identical. The entry **remains uncommitted** on the new Leader. The new Leader will continue replication, and it will only be committed if it is replicated to a **majority** of servers *by the new Leader*.
+
+**Key Point:** Since the Leader only failed to replicate the entry to a majority, the entry **never became committed**. Therefore, any new, legitimately elected Leader will either:
+1.  **Discard** the entry if it's not present on the new Leader.
+2.  **Maintain** the entry as **uncommitted** if it is present, and then attempt to replicate it anew. It will **only be committed** if it achieves a majority under the new Leader's term.
+
+**Conclusion:** The entry remains **uncommitted** because it didn't meet the majority rule. The $\text{Log Matching Property}$ of $\text{AppendEntries}$ RPCs ensures that the new Leader's log will **always override** and **correct** the logs of all Followers, deleting any inconsistent, uncommitted entries.

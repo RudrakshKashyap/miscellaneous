@@ -1,5 +1,35 @@
 # [File access](https://www.youtube.com/watch?v=rW_NV6rf0rM)
 
+That depends on how you define "share" and which memory segment you're talking about, but the short answer is **yes, they initially share the same physical memory, but this sharing is immediately broken upon modification.**
+
+The mechanism that makes this possible is called **Copy-on-Write (COW)**.
+
+---
+
+## 1. The Principle: Copy-on-Write (COW) 🐮
+
+When the `fork()` system call is executed, the operating system (OS) does **not** immediately duplicate all of the parent process's memory (which can be gigabytes). Instead, it uses a clever optimization called Copy-on-Write (COW):
+
+* **Virtual vs. Physical Memory:** The child process gets a separate, distinct **virtual address space** (its own view of memory). However, both the parent and child's virtual address spaces are initially mapped to the **exact same physical memory pages** in RAM.
+* **Permissions:** The OS marks these shared pages as **read-only**.
+* **Sharing:** As long as both processes only **read** the data (like the program code or initialized variables), they share the same physical memory, saving time and RAM. 
+* **Copying:** The moment **either** the parent or the child attempts to **write** to a shared memory page, a **page fault** occurs. The OS intercepts this, allocates a new physical memory page, copies the original data to the new page, updates the writing process's page table to point to the new private copy, and then sets the new copy to be writable.
+
+From that point on, the two processes have their own private copy of that specific memory page, and changes in one process are invisible to the other.
+
+---
+
+## 2. Shared vs. Copied Segments
+
+While the COW mechanism applies broadly, the following segments are handled differently:
+
+| Memory Segment | Fork Behavior | Parent/Child Interaction |
+| :--- | :--- | :--- |
+| **Code Segment (Text)** | **Shared.** | Always shared and read-only. They execute the exact same instructions. |
+| **Stack, Heap, Data** | **COW.** | Initially shared (via COW), but a write by either process forces a private copy of the affected memory page. **Changes are NOT seen by the other.** |
+| **Shared Memory (Explicit IPC)** | **Shared.** | Memory allocated using special mechanisms like `shmget` or `mmap` with the `MAP_SHARED` flag **is truly shared** and visible to both processes, even after writes. This is the exception to the COW rule. |
+| **File Descriptors** | **Shared.** | File descriptors (for open files, network sockets, etc.) are **shared**. They both point to the same entry in the kernel's file table. If one process reads from the file, the file pointer advances for the other as well. |
+
 ![](../Images/i18.png)
 
 ### 1. File Descriptor (fd) Table (Per-Process in PCB)
