@@ -4,7 +4,7 @@ When you type **google.com** into your browser's URL bar and press Enter, a comp
    - The browser parses the input to determine if it's a URL or a search term. Since "google.com" is a valid domain, the browser assumes HTTPS (default for most modern browsers).
 
 ### 2. **Decides HTTP/HTTPS protocol**
-   - Checks the **HSTS Preload List** to enforce HTTPS (Google is on this list, so HTTP is bypassed).
+   - Checks the **HSTS(HTTP strict transport security) Preload List** to enforce HTTPS (Google is on this list, so HTTP is bypassed). (You need to manually apply for your domain to be eligible).
 
 ### 3. **DNS Lookup**
    - **Browser Cache**: Checks if the IP for google.com is cached.
