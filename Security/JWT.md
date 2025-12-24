@@ -45,7 +45,7 @@ However, the **Refresh Token** is only used once every 15–30 minutes. This all
 * Once the short Access Token expires, the hacker has nothing. They cannot renew it.
 
 ### 3. Refresh Token Rotation (Advanced Security)
-To make this even tighter, banks and secure apps use **Token Rotation**.
+To make this even tighter, banks and secure apps use **Token Rotation**(generally by changing the date field in token).
 * Every time you use a Refresh Token to get a new Access Token, the server **also issues a new Refresh Token** and invalidates the old one.
 * If a hacker manages to steal your Refresh Token and tries to use it, the server sees that an "old" Refresh Token is being used.
 * The server concludes: *"This is theft."* It immediately invalidates **all** tokens for that user, forcing everyone to log in again.
