@@ -6,3 +6,9 @@ react context redux, comp life cycle
 arrow functions
 
 react query
+
+
+react fiber
+https://www.youtube.com/@ReactNext/videos
+
+https://www.youtube.com/watch?v=-KEuTPIpLbE

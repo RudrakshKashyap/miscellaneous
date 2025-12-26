@@ -164,3 +164,11 @@ Lists DNS servers assigned via DHCP or manual config.
 | **Blocking Method** | Simple port block | Needs DPI(Deep Packet Inspection)/ML |
 
 ---
+
+
+<br />
+<br />
+<br />
+
+
+## [CNAME](https://en.wikipedia.org/wiki/CNAME_record) - [The canonical (true) name](https://www.youtube.com/watch?v=ZXCQwdVgDno)

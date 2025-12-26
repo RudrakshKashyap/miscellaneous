@@ -1,3 +1,21 @@
+## World wide web
+
+Historically, the `www` in a web address (like `www.google.com`) was a **subdomain** used to tell the server which service you wanted. Just as `mail.google.com` takes you to email and `ftp.google.com` might have been used for file transfers, `www` was the standard way to say "I want the website."
+
+In the 90s and early 2000s, www literally stood for the "World Wide Web server," while the naked domain was often used to point to the "Main Server" (which might have been used for email, FTP, or shell access instead of just web pages).
+
+Even though it's optional for users, engineers still use it for a few technical reasons:
+
+* **Cookie Control:** If a site uses `www.example.com`, it can keep its cookies restricted to just the website. If it uses the "naked" domain (`example.com`), those cookies might be sent to every other subdomain (like `mail.example.com`), which can cause security or performance issues.
+* **Large-Scale Traffic (DNS):** For massive websites (like Facebook or Amazon), using `www` makes it easier to use a **CNAME record**. This allows them to quickly shift traffic to different servers if one goes down. It’s much harder to do this with a "naked" domain. <!-- TODO --> TODO - didnt quite understand this
+* **Branding:** In some parts of the world or on physical advertisements (billboards), `www` is still a universal "symbol" that tells people "this is a website address."
+
+<br />
+<br />
+<br />
+
+---
+
 When you type **google.com** into your browser's URL bar and press Enter, a complex sequence of events unfolds to deliver the webpage to your screen. Here's a detailed breakdown:
 
 ### 1. **URL Parsing & Scheme Resolution**

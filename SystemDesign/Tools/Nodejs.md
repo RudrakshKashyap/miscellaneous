@@ -104,7 +104,7 @@ fs.readFile('/path/to/file', (err, data) => {
 });
 ```
 
-### 2. V8 JavaScript Engine
+### 2. [V8 JavaScript Engine](https://www.youtube.com/watch?v=xckH5s3UuX4)
 *   **What it is:** The powerful JavaScript engine developed by Google for the Chrome browser. Node.js uses V8 to execute your JavaScript code.
 *   **Its Role:** It compiles your JavaScript code directly to machine code (instead of interpreting it line-by-line) for high performance. It handles memory allocation, garbage collection, and provides the core JavaScript environment (like `Array`, `JSON`, `Date` objects).
 
@@ -144,7 +144,9 @@ void ReadFile(const FunctionCallbackInfo<Value>& args) {
 
 
 ### 5. libuv
-*   **What it is:** This is the **secret sauce** of Node.js. It's a multi-platform C library that gives Node.js two superpowers:
+
+*   **What it is:** Libuv is a cross-platform C library originally written for Node.js for asynchronous I/O.
+It's a multi-platform C library that gives Node.js two superpowers:
     1.  **[EVENT LOOP](https://youtu.be/okkHnAo8GmE?si=4K1ecOUJ3hVUdiwT&t=1183):** The heart of Node.js's non-blocking, asynchronous behavior. It's a single-threaded loop that constantly checks for completed tasks (like a finished file read or an incoming network connection). When a task is done, it places the corresponding callback function in a queue to be executed.
     2.  **Thread Pool:** While I/O operations are asynchronous, some tasks are inherently CPU-intensive and blocking (e.g., file system operations on some OSs, cryptographic functions like `crypto.pbkdf2`). `libuv` provides a thread pool (by default, **4 threads**) to handle these tasks without blocking the main Event Loop. The Event Loop offloads these heavy tasks to the thread pool and continues running, picking up the callback when the thread is finished.
 
@@ -194,17 +196,33 @@ Node.js reads `my_script.js` from disk and passes the JavaScript source code to 
 
 ### Step 5: V8 Compiles and Executes
 
-1.  **Parsing:** V8 reads your JavaScript source code and breaks it down into a data structure called an **Abstract Syntax Tree (AST)**. This is like understanding the grammar and structure of a sentence.
+1.  **Parsing:** V8 reads your JavaScript source code and breaks it down into a data structure called an **Abstract Syntax Tree (AST)**. This is like understanding the grammar and structure of a sentence.  Then, its **Ignition interpreter** quickly translates the AST into a lean **bytecode**(remember-> it's not machine code) representation, which is executed immediately. This allows for fast startup times.
+
+    ### How Ignition "interprets"
+
+    When Ignition encounters a bytecode instruction, it doesn't generate new code. Instead, it jumps to a **pre-compiled handler**.
+
+    1. **The Dispatch Table:** Ignition has a big table of "handlers" (tiny snippets of machine code that were written by the V8 developers, not generated at runtime).
+    2. **The Fetch:** It looks at the current bytecode (e.g., `Add`).
+    3. **The Execution:** It looks up the `Add` handler in its table.
+    4. **The Action:** It jumps to that pre-written code, which tells the CPU to perform the addition using the values currently in the "virtual registers."
+    5. **The Next Step:** It moves to the next bytecode and repeats.
+
 2.  **Compilation:** V8 uses a **Just-In-Time (JIT)** compiler. This is the key to its speed. Instead of interpreting code line-by-line (which is slow) or compiling it all ahead of time (like C++), it does a mix:
-    *   It first compiles the code to a fast, but not highly-optimized, machine code. This lets the code start running very quickly.
+    *   It first compiles the code to a fast, but not highly-optimized, **machine code**. This lets the code start running very quickly.
     *   While the code is running, V8 profiles it in the background. If it notices a function being called repeatedly (a "hot" function), it sends that function through an **optimizing compiler** (called **TurboFan**) which produces highly-optimized machine code.
     *   If the assumptions of the optimized code turn out to be wrong (e.g., a variable changes type), it **deoptimizes** the code, falling back to the less-optimized version. This process is what makes modern JavaScript so fast.
 
 V8 works in several stages:
 1. **Parser**: Converts JavaScript text into an Abstract Syntax Tree (AST)
-2. **Interpreter (Ignition)**: Quickly converts AST to bytecode and starts executing
+2. **Interpreter (Ignition)**: Quickly converts AST to bytecode and starts executing.
 3. **Profiler (Magpie)**: Watches for "hot" functions that are called frequently
 4. **Optimizing Compiler (TurboFan)**: Compiles hot functions to highly optimized machine code
+
+5. **De-optimization**:
+    Because TurboFan makes "guesses" to optimize those hot functions (like assuming a variable will always be a number), it sometimes gets things wrong.
+
+    If the code suddenly changes—for example, you start passing a **string** into a function that used to only take **numbers**—the engine does something called **De-optimization**. It throws away the optimized machine code and "falls back" to the Ignition interpreter to handle the code safely again.
 
 ### Step 6: When System Calls Are Needed
 

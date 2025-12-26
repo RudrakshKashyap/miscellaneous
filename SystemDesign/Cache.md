@@ -135,3 +135,7 @@ Here are some example scenarios & what strategies tend to work well:
 | Mobile / edge / browser caching                                          | Need to minimize network calls; read-through or cache aside; possibly offline fallback; eviction by recency/frequency; TTL critical.                                                             |
 
 ---
+
+
+# Caching Pitfalls - TODO
+https://www.youtube.com/watch?v=wh98s0XhMmQ
