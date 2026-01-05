@@ -1,4 +1,4 @@
-##  How CSRF Tokens Work (The Actual Defense)
+##  How CSRF Tokens Work
 Since CORS doesn't block simple `POST` requests, we need a separate, robust mechanism to defeat CSRF: **the CSRF token**.
 
 1.  **Server Issues a Token**: When a user logs into `https://your-bank.com` and loads a form (e.g., to transfer money), the server generates a unique, secret, unpredictable string (the CSRF token) and embeds it in the form as a hidden field. This same token is also stored in the user's session on the server.
@@ -17,6 +17,12 @@ Since CORS doesn't block simple `POST` requests, we need a separate, robust mech
 
 
 **A CSRF Attack**: You visit `https://evil-site.com`. Its page contains a hidden form that `POST`s directly to `https://bank.com/transfer`. Your browser automatically sends your session cookies with this request. **CORS does NOT block this simple `POST`.** However, the request will fail because `evil-site.com` cannot provide a valid CSRF token, which the bank's server will require.
+
+
+> You need to use CSRF tokens in login forms as well. Due to CSRF there is no way 
+for `evil.com` to log you in `steam.com`. Users generally stay logged in after
+redirect because they were already Logged in to real `steam.com` otherwise there is no way because `evil.com` can't set cookie for `steam.com`. And you wont be logged out either when attacker log into your account bc new Access + Refresh token is generated for it's session(both you and his sessions are valid).
+
 
 ---
 
@@ -50,7 +56,7 @@ Because the script is executing inside the victim's browser *under the origin* o
 
 -----
 
-### 2\. How Iframes Help the Attacker
+### 2. How Iframes Help the Attacker
 
 Iframes are incredibly useful for attackers because they allow the attack to happen **stealthily** or **automatically**.
 
@@ -333,10 +339,3 @@ During tree construction, **the parser also handles potential errors in the HTML
 <br/>
 <br/>
 <br/>
-
-# DOM vs Document
-
-The **DOM is the abstract, theoretical model/interface**, while the document object is the **actual, concrete object (implementation)** that you use in JavaScript to interact with that model. 
-
-You can view this DOM as live tree like structure, in Elements tab.
-The DOM API defines *how a document(actual html document) should be modeled as object*.

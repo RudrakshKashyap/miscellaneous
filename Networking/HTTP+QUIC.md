@@ -129,7 +129,11 @@ These headers ensure the server and client speak the same language.
 * **`Authorization` (Request only, i.e. not in http response):**
     * **Function:** Holds credentials (like Bearer tokens or Basic Auth) to prove identity.
 
-### 4. [CORS Headers (Cross-Origin Resource Sharing)](https://beeceptor.com/docs/concepts/cors/)
+### 4. [CORS Headers (Cross-Origin Resource Sharing)](https://beeceptor.com/docs/concepts/cors/) (READ only protection)
+
+> Same-Origin Policy (SOP) is browser only feature/limitation.
+
+
 If you are building an API that is accessed by a frontend on a different domain, you **must** configure these.
 
 * **`Access-Control-Allow-Origin`:** Specifies which domains are allowed to access your API resources.

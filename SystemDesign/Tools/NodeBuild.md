@@ -119,7 +119,7 @@ You can think of a modern **Build Tool** as a "manager" that coordinates a **Bun
 ### The Components:
 
 * **Transpiler (The Translator):** Converts modern syntax (ES6+, TypeScript, JSX) into a version of JavaScript that older browsers can understand.
-* *Examples:* **Babel**, **SWC**, **esbuild**.
+* *Examples:* **Babel**, **SWC(Speedy Web Compiler)**, **esbuild**.
 
 
 * **Bundler (The Organizer):** Takes hundreds of small files and merges them into one (or a few) optimized files. This reduces the number of requests the browser has to make.
@@ -132,7 +132,7 @@ You can think of a modern **Build Tool** as a "manager" that coordinates a **Bun
 
 ##  What is Vite?
 
-**Vite** (French for "fast") is the current industry favorite for building web apps. It solved the biggest problem with older tools like Webpack: **speed.**
+The Build Tool for the Web. **Vite** (French for "fast") is the current industry favorite for building web apps. It solved the biggest problem with older tools like Webpack: **speed.**
 
 ## Does Vite leave your code for the browser?
 
@@ -161,4 +161,3 @@ For production, Vite becomes a traditional bundler (using **Rollup**).
 | **Browser's Job** | Handles the linking of modules. | Just executes the final optimized bundle. |
 
 ---
-

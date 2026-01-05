@@ -9,7 +9,7 @@ In a standard, modern implementation, each login session is treated as a unique 
 | --- | --- | --- | --- |
 | **Phone** | `AT_Alpha` | `RT_Alpha` | Session 1 |
 | **Laptop** | `AT_Beta` | `RT_Beta` | Session 2 |
-
+user agen
 
 * **Security (Blast Radius):** If your phone is stolen and an attacker gets the refresh token, the server can revoke *only* the phone’s token. Your laptop remains logged in and safe.
 * **Independent Expiry:** You might use your phone every day but only use your laptop once a week. Separate tokens allow the phone to stay "refreshed" while the laptop session might eventually expire due to inactivity.
@@ -33,7 +33,7 @@ In a browser, websites use JavaScript and HTTP headers to gather data. Because w
 
 | Identifier | What it reveals |
 | --- | --- |
-| **User-Agent String** | Browser name, version, and the host Operating System (e.g., Chrome 120 on macOS). |
+| **User-Agent String** | Browser name, version, and the host Operating System (e.g., Chrome 120 on macOS). (You can edit it in **Network condition** tab of devtools)|
 | **HTTP Headers** | Language preferences, encoding support, and "Do Not Track" settings. |
 | **Screen Resolution** | Your monitor's width, height, color depth, and the actual available "workspace" (excluding taskbars). |
 | **Timezone & Locale** | Your system clock offset and regional settings (e.g., `en-US`, `Asia/Kolkata`). |
