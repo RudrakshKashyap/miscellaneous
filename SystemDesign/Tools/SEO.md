@@ -2,6 +2,8 @@ Search Engine Optimization (SEO) is the practice of increasing the quantity and 
 
 ---
 
+# [SEO in next.js - crash course](https://www.youtube.com/watch?v=cgq_HsDduSQ)
+
 ## 1. Search Engine Optimization (SEO)
 
 SEO is generally divided into three main pillars:
@@ -96,8 +98,50 @@ Used when you have duplicate content. It tells search engines which version of a
 
 Applied to images. It helps search engines understand what an image is about (since they can't "see" it) and improves accessibility for visually impaired users.
 
-### Schema Markup (Structured Data)
+### [Schema Markup](https://www.youtube.com/watch?v=jep0DWoPkDc) ([Structured Data](https://www.youtube.com/shorts/ME2F03PC_K0))
 
 A code you put on your website to help search engines provide more informative results for users. This powers "Rich Snippets," like star ratings, recipe times, or event dates appearing directly in search results.
+https://schema.org/
+
+### Open Graph
+
+Open Graph is a protocol used to influence the way a web page is shared on social media. <- the card that opens when you share a link on whatsapp or something.
+
+
+### [LLMs.txt](https://llmstxt.org/)
+
+Standard websites are built for humans, which makes them "noisy" for AI - HTML Clutter, Context Window Limits, Structure.
+
+
+```markdown
+# Project Name (H1 - Required)
+> Brief summary of what this site/project is about (Blockquote - Required)
+
+Optional section for more detailed instructions to the AI.
+
+## Core Documentation (H2 - Recommended)
+- [Quick Start](/docs/get-started): Brief description of the resource.
+- [API Ref
+```markdown
+# Project Name (H1 - Required)
+> Brief summary of what this site/project is about (Blockquote - Required)
+
+Optional section for more detailed instructions to the AI.
+
+## Core Documentation (H2 - Recommended)
+- [Quick Start](/docs/get-started): Brief description of the resource.
+- [API Reference](/docs/api): Essential technical details.
+
+## Optional
+- [Old Blog](/archive): Lower priority content.
+- [Reference](/docs/api): Essential technical details.
+
+## Optional
+- [Old Blog](/archive): Lower priority content.
+
+```
+
+The standard also suggests a second file, `llms-full.txt`. This file is intended to be a **single, massive Markdown file** containing the actual content of all your important pages concatenated together. This allows a developer to simply paste one URL into a tool like **Cursor** or **ChatGPT** to give the AI the entire context of the site instantly.
+
 
 ---

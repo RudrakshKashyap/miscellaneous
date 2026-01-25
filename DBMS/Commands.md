@@ -1,7 +1,7 @@
 - [CheetSheet 1](https://www.dbvis.com/wp-content/uploads/2024/04/SQL-Cheat-Sheet.pdf)
 - [CheatSheet 2](https://github.com/enochtangg/quick-SQL-cheatsheet?tab=readme-ov-file#create)
 
-
+A database **schema** is the logical blueprint or structure that defines how data is organized, stored, and related within a database.
 
 * OLAP - Online Analytical Processing
 * OLTP - Online Tranx Processing

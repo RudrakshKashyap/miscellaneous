@@ -27,10 +27,20 @@
 
 ## Branch & Checkout
 - `git checkout <hash>`  
-  Enter detached HEAD state (new commits will be lost unless branched).
+  - Enter detached HEAD state (new commits will be lost unless branched).
+  - The `HEAD` points **directly to the commit** instead of a branch.
+  - If you make new commits here, they aren't saved to any branch. If you switch back to `main`, those new commits become "orphaned" and very hard to find.
+  - Look around (Read-only)
+  - If you like what you see and want to start developing from that old point, don't just stay in a detached state. Create a new branch immediately:
+    `git checkout -b new-branch-name`
 
 - `git switch <branch>`  
-  Switch branches (safer alternative to `checkout` for branches).
+  - Switch branches (safer alternative to `checkout` for branches).
+  - `-c newBranch`, `-` for previous branch
+  - `--detach <hash>`, same as checkout but checkout might get confused if
+  you have same filename as commit hash.
+
+  **Safety** - If you have a file named "test" and a branch named "test," git checkout test might get confused and overwrite your file instead of switching branches. git switch test will always assume you mean the branch.
 
 - `git checkout HEAD -- <filename>`  
   Discard changes to a specific file (working directory).
