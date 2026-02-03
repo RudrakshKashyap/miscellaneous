@@ -12,7 +12,7 @@
 - `Alt z -` - Toggle word wrap
 - `Fold/Unfold` - Lookup yourself
 
-[Official Keyboard reference sheet for Linux](https://code.visualstudio.com/shortcuts/keyboard-shortcuts-linux.pdf)
+Official Keyboard reference sheet for [Linux](https://code.visualstudio.com/shortcuts/keyboard-shortcuts-linux.pdf) [Mac](https://code.visualstudio.com/shortcuts/keyboard-shortcuts-macos.pdf)
 
 
 

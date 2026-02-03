@@ -41,7 +41,7 @@ The "Hybrid" approach, popularized by Next.js.
 
 ---
 
-## 5. Hydration: Making the HTML "Alive"
+## 5. [Hydration](./Hydration.md): Making the HTML "Alive"
 
 This isn't a rendering pattern itself, but a process used by SSR, SSG, and ISR.
 
@@ -220,6 +220,12 @@ While both keep a connection open, they serve different purposes:
 
 * **Server-Sent Events (SSE):** Designed for long-lived connections to push *real-time updates* (like a stock ticker or a chat message) over a long period. It uses a specific content type (`text/event-stream`).
 * **Chunked Transfer (React Streaming):** Designed to send a **single document** in pieces. It uses `Transfer-Encoding: chunked`. The browser treats it as one continuous HTML file that just happens to be arriving in bits and pieces.
+
+### **Suspense in Next.js**
+The App Router uses a special file convention, `loading.js` (or `.tsx`), which is built on top of React Suspense. When this file is present within a route directory, Next.js automatically wraps the corresponding page segment in a Suspense boundary. The component exported from `loading.js` is displayed as a fallback while the main page content is loading.
+
+You can also manually use the `<Suspense>` component for more granular control over your UI. This is useful for streaming specific components within a page, rather than the entire page content, allowing you to prioritize the loading of critical content and prevent slow data requests from blocking the rest of the page from rendering.
+
 
 ## 3. **Next.js App Router with Server Components**
 

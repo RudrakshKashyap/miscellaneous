@@ -289,6 +289,8 @@ The "bundler" is what takes all your individual files and packages them together
 
 # [SASS](https://www.youtube.com/watch?v=akDIJa0AP5c)
 
+SCSS is a preprocessor scripting language that extends CSS with dynamic features like variables, nesting, and mixins.
+
 When people say "I'm using Sass," they usually mean they are using the **Sass Preprocessor** but writing their code in the **SCSS format**. Basically it just means they are using curly braces instead of indentation.
 
 **Standard CSS:**

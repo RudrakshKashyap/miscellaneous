@@ -13,7 +13,7 @@ Use sparingly: Only add ARIA when semantic HTML isn't sufficient for accessibili
 <br />
 <br />
 
-# DOM vs Document
+# DOM (Document Object Model) vs Document
 
 The **DOM is the abstract, theoretical model/interface**, while the document object is the **actual, concrete object (implementation)** that you use in JavaScript to interact with that model. 
 
