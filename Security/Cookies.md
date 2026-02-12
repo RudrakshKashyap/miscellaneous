@@ -69,3 +69,18 @@ The "Standard Safe Pattern" for storing tokens is:
 | **Best For** | User preferences (theme, etc.) | **Refresh Tokens** / Session IDs |
 
 *> **Note on CSRF:** HttpOnly cookies protect against theft, but because they are sent automatically, they can be abused for Cross-Site Request Forgery (CSRF). This is easily solved by using `SameSite=Strict` cookies or anti-CSRF tokens.*
+
+
+## Auth Token in Header(bearer) vs Cookies
+
+If your frontend is at `myapp.com` and your API is at `api.com`, cookies can be tricky to configure (requiring `CORS` and `SameSite` tweaks). Headers work everywhere regardless of domain.
+#### The "Best of Both Worlds" Strategy
+
+Many modern apps use **Cookies for the Web** (to prevent theft) and **Bearer Tokens for Mobile** (for ease of use). NestJS makes this easy because you can write a "multi-extractor" strategy that checks for both:
+
+```typescript
+jwtFromRequest: ExtractJwt.fromExtractors([
+  (req) => req?.cookies?.jwt,              // Check cookies first
+  ExtractJwt.fromAuthHeaderAsBearerToken() // Fallback to header for mobile
+])
+```

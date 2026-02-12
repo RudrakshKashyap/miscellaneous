@@ -133,6 +133,7 @@ These headers ensure the server and client speak the same language.
 
 > Same-Origin Policy (SOP) is browser only feature/limitation.
 
+> ### Cross-Origin Resource Sharing (CORS) is a security mechanism enforced exclusively by web browsers to restrict scripts (like JavaScript) from making requests to a different domain, protecting users from unauthorized data access. Server-to-server communication, tools like Postman, or `curl` commands do not follow or enforce CORS policies. 
 
 If you are building an API that is accessed by a frontend on a different domain, you **must** configure these.
 

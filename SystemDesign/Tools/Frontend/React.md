@@ -163,6 +163,41 @@ const [message, setMessage] = useState('');
   }, [])
 ```
 
+```javascript
+// check this out
+const [v, setV] = useState(true); 
+
+// Effect A
+useEffect(() => {
+  console.log("Effect A (Empty Array)");
+  setV(false); 
+}, []);
+
+// Effect B
+useEffect(() => {
+  if (v === true) {
+    console.log("Effect B (With Variable)");
+  }
+}, [v]);
+
+```
+
+There are two distinct "Render Cycles" that occur here.
+
+#### Cycle 1: The Initial Mount
+
+1. **Render:** The component renders with `v = true`.
+2. **Effect A Runs:** Logs `"Effect A (Empty Array)"`.
+3. **State Update:** `setv(false)` is called inside Effect A. This schedules a **re-render**.
+4. **Effect B Runs:** Since it is the first mount, it checks `if (v == true)`. Because `v` is still `true` in this render's scope, it logs `"Effect B (With Variable)"`.
+
+#### Cycle 2: The Re-render (caused by Effect A)
+
+1. **Render:** The component re-renders with `v = false`.
+2. **Effect A:** Does **not** run (empty array `[]` only runs on mount).
+3. **Effect B:** Detects that `v` changed from `true` to `false`. It runs again. However, the condition `if (v == true)` is now **false**, so it logs nothing.
+
+
 ### 4. useContext
 In React, `useContext` and the `Provider` component are the two main parts of the **Context API**. Together, they solve the problem of **prop drilling**—the tedious process of passing data through multiple layers of components that don't actually need it.
 
