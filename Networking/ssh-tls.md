@@ -1,3 +1,23 @@
+# My understanding (SSH vs TLS)
+
+SSH and TLS is almost the same but... but..
+TLS is just name for encrypting the application level data
+like HTTP data, then the packet goes to TCP level.
+TLS doesn't manage the multiplexing/channeling(it only encrypts) - that's job for HTTP Streams to handle.
+
+But SSH has to manage both encryption and connection channel/flow control, that's why it's heavy than TLS.
+
+TLDR => `SSH = TLS + HTTP`
+
+
+
+| Feature | **TLS (SSL)** | **SSH** |
+| --- | --- | --- |
+| **Trust Source** | **Certificate Authorities (CAs).** Your browser trusts a site because a third party (like Digicert) verified it. | **The User ("Trust on First Use").** You trust the server because you personally verify its "fingerprint" the first time you connect. |
+| **Authentication** | Usually **One-way**. Only the server proves its identity to you. | **Mutual**. Both you and the server must prove you are who you say you are. |
+| **Credentials** | X.509 Digital Certificates. | SSH Keys or Passwords. |
+
+
 # SSH (Secure Shell) - Complete Guide
 
 SSH (Secure Shell) is a cryptographic network protocol that allows secure remote access and data communication between computers over an unsecured network (like the internet). It encrypts all traffic to prevent eavesdropping, connection hijacking, and other attacks.
@@ -221,7 +241,7 @@ Random number R: [encrypted with client's public key]
 
 **Client Actions:**
 1. Decrypt R with private key
-2. Sign (R + session ID)
+2. Sign (R + session ID) -> server will again use "your Public key" to verify.
 
 **Client → Server: SSH_MSG_USERAUTH_REQUEST**
 ```yaml
