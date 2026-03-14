@@ -274,3 +274,44 @@ While Context is powerful, it makes components harder to reuse because they "dep
 <br />
 <br />
 <br />
+
+---
+
+## The "Full Reload" vs. SPA Routing
+
+In both CRA and Vite, using `window.location.href` causes a **hard refresh**. The browser throws away the current state, re-downloads the HTML/JS, and restarts the app.
+
+**The Better Way:**
+If you are using `react-router-dom`, you should use the `Maps` function or `<Link>` component. This changes the URL without refreshing the page.
+
+```javascript
+// Instead of this:
+window.location.href = "/dashboard";
+
+// Use this (React Router):
+const navigate = useNavigate();
+navigate("/dashboard");
+```
+
+---
+
+### 2. The Vercel "404" Trap (The Real Risk)
+
+When you move to Vite on Vercel, the way your routes are handled by the server might change if your `vercel.json` isn't set up for an SPA.
+
+If a user goes to `/someroute` via `window.location.href`, the browser asks Vercel for a file at `/someroute/index.html`. Since that file doesn't exist (Vite creates one single `index.html`), Vercel will throw a **404 error** unless you have a rewrite rule.
+
+**The Fix:**
+Ensure you have a `vercel.json` file in your root directory to catch all routes and point them to your Vite entry point:
+
+```json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+```
+
+### Why this fixes it:
+
+When Vercel receives the request for `/wms/picker/scanCode/1893584`, it will now see your `vercel.json` rule. Instead of giving up and showing a 404, it will "secretly" serve the `index.html` file.
+
+Once `index.html` loads in the browser, your **React Router** starts up, looks at the URL in the address bar, and says: _"Oh, I know that route! I'll render the ScanCode component for ID 1893584."_

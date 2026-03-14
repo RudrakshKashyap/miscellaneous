@@ -139,3 +139,16 @@ Optional section for more detailed instructions to the AI.
 The standard also suggests a second file, `llms-full.txt`. This file is intended to be a **single, massive Markdown file** containing the actual content of all your important pages concatenated together. This allows a developer to simply paste one URL into a tool like **Cursor** or **ChatGPT** to give the AI the entire context of the site instantly.
 
 ---
+
+<br />
+
+## Preview Tab
+
+Since that `<link rel="stylesheet" href="/_next/static/css/..." />` tag is physically present in your HTML `<head>`, **your SEO is perfectly safe.**
+
+The fact that it doesn't show in the **Preview** tab is a known quirk of Chrome DevTools, not a reflection of what search engines see.
+
+The DevTools **Preview** tab is a very basic renderer. It often fails to load external CSS files (like your `/_next/static/css/...` file) for two main reasons:
+
+1. **Security/CORS:** The preview window is sandboxed. It often blocks requests for external assets (the `.css` file) to prevent tracking or security leaks while you're just inspecting a response.
+2. **Relative Pathing:** The Preview tab doesn't always know the "Base URL." It sees `/next/static/...` and tries to find it relative to a temporary internal location instead of your actual domain (e.g., `localhost:3000` or `yourdomain.com`).
