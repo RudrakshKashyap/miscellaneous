@@ -63,6 +63,9 @@
 - `git rebase <branch>`  
   Change the base of the current branch (rewrites commit history).
 
+- `git pull --rebase`
+  It temporarily stashes your local commits, pulls the remote commits, and then reapplies your local commits one by one on top of the fetched changes.
+
 ## Branch Management
 - `git branch -vv`  
   List all branches and their upstream remotes.

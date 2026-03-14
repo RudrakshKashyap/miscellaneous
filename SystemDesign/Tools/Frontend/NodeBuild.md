@@ -14,12 +14,12 @@ This file is the heart of your project. It lists the metadata and the general ve
 
 **Common Fields:**
 
-* **name:** The name of your project.
-* **version:** Current version (e.g., `1.0.0`).
-* **scripts:** Shortcuts for terminal commands (e.g., `"start": "node index.js"`).
-* **dependencies:** Packages required for the app to **run** (e.g., React).
-* **devDependencies:** Packages only needed during **development** (e.g., testing tools like Jest).
-* **engines:** Specifies which version of Node.js the project requires.
+- **name:** The name of your project.
+- **version:** Current version (e.g., `1.0.0`).
+- **scripts:** Shortcuts for terminal commands (e.g., `"start": "node index.js"`).
+- **dependencies:** Packages required for the app to **run** (e.g., React).
+- **devDependencies:** Packages only needed during **development** (e.g., testing tools like Jest).
+- **engines:** Specifies which version of Node.js the project requires.
 
 ### **package-lock.json (The Manifest)**
 
@@ -55,12 +55,13 @@ If your `package.json` looks like this:
 
 ```
 
-* Running `npm run dev` tells npm to look up the "dev" key and execute `nodemon index.js`.
-* **Benefit:** It allows you to wrap long, complex terminal commands into short, easy-to-remember aliases.
+- Running `npm run dev` tells npm to look up the "dev" key and execute `nodemon index.js`.
+- **Benefit:** It allows you to wrap long, complex terminal commands into short, easy-to-remember aliases.
 
 > **Note:** For certain standard commands like `start` and `test`, you can just type `npm start` or `npm test`. For everything else, you must include `run`.
 
 ---
+
 <br />
 <br />
 <br />
@@ -74,16 +75,16 @@ A **Module Bundler** is a tool that takes all your separate files (JavaScript, C
 1. **Dependency Mapping:** They start at your "Entry Point" (usually `index.js`) and follow every `import` and `require` to create a "Dependency Graph"—a map of how every file in your project is connected.
 2. **Code Transformation(using Transpilers):** They convert modern code (TypeScript, JSX, SCSS) into standard JavaScript and CSS that browsers can actually run.
 3. **Optimization:**
-    * **Minification:** Removing spaces and comments to shrink file size.
-    * **Tree Shaking:** Deleting code that you imported but never actually used.
-    * **Code Splitting:** Splitting your app into small "chunks" so the user only downloads the code they need for the current page.
-    
+   - **Minification:** Removing spaces and comments to shrink file size.
+   - **Tree Shaking:** Deleting code that you imported but never actually used.
+   - **Code Splitting:** Splitting your app into small "chunks" so the user only downloads the code they need for the current page.
+
 ### Why the lines are blurring
 
 Lately, the distinction has faded because new tools are doing **both(merging + transpiling)** at the same time to save speed.
 
-* **esbuild:** This is a "Bundler," but it is written in Go and is so fast that it does the transpilation (TS to JS) and the bundling (merging) in a single step.
-* **SWC:** This is primarily a "Transpiler" (replacing Babel), but it’s becoming so powerful that it's starting to handle bundling logic too.
+- **esbuild:** This is a "Bundler," but it is written in Go and is so fast that it does the transpilation (TS to JS) and the bundling (merging) in a single step.
+- **SWC:** This is primarily a "Transpiler" (replacing Babel), but it’s becoming so powerful that it's starting to handle bundling logic too.
 
 ---
 
@@ -95,14 +96,10 @@ If you ever look at a **Webpack** configuration, you'll see a section called `ru
 // A "Loader" is just the Bundler handing a file to a Transpiler
 module: {
   rules: [
-    { test: /\.js$/, use: 'babel-loader' } // "Hey Babel, fix this JS file for me"
-  ]
+    { test: /\.js$/, use: "babel-loader" }, // "Hey Babel, fix this JS file for me"
+  ];
 }
-
 ```
-
-
-
 
 ---
 
@@ -118,19 +115,17 @@ You can think of a modern **Build Tool** as a "manager" that coordinates a **Bun
 
 ### The Components:
 
-* **Transpiler (The Translator):** Converts modern syntax (ES6+, TypeScript, JSX) into a version of JavaScript that older browsers can understand.
-* *Examples:* **Babel**, **SWC(Speedy Web Compiler)**, **esbuild**.
+- **Transpiler (The Translator):** Converts modern syntax (ES6+, TypeScript, JSX) into a version of JavaScript that older browsers can understand.
+- _Examples:_ **Babel**, **SWC(Speedy Web Compiler)**, **esbuild**.
 
+- **Bundler (The Organizer):** Takes hundreds of small files and merges them into one (or a few) optimized files. This reduces the number of requests the browser has to make.
+- _Examples:_ **Webpack**, **Rollup**, **esbuild**.
 
-* **Bundler (The Organizer):** Takes hundreds of small files and merges them into one (or a few) optimized files. This reduces the number of requests the browser has to make.
-* *Examples:* **Webpack**, **Rollup**, **esbuild**.
-
-
-* **Task Runner/Dev Server (The Assistant):** Handles the "quality of life" stuff—refreshing your browser when you save (HMR), minifying code, and managing assets like images.
+- **Task Runner/Dev Server (The Assistant):** Handles the "quality of life" stuff—refreshing your browser when you save (HMR), minifying code, and managing assets like images.
 
 ---
 
-##  What is Vite?
+## What is Vite?
 
 The Build Tool for the Web. **Vite** (French for "fast") is the current industry favorite for building web apps. It solved the biggest problem with older tools like Webpack: **speed.**
 
@@ -142,22 +137,71 @@ This depends on whether you are in **Development** or **Production**. Vite is fa
 
 **Yes, you are right!** Vite leaves your source code mostly "unbundled."
 
-* **Your Code:** Vite serves your files as **Native ES Modules (ESM)**. When you write `import { myCode } from './myFile'`, the browser actually sends a request for `./myFile.js`. Vite transforms it on the fly and sends it over.
-* **Dependencies:** Since libraries (like React or Lodash) can have thousands of internal files, Vite **pre-bundles** them into single files using **esbuild** so the browser doesn't get overwhelmed with 5,000 requests at once.
+- **Your Code:** Vite serves your files as **Native ES Modules (ESM)**. When you write `import { myCode } from './myFile'`, the browser actually sends a request for `./myFile.js`. Vite transforms it on the fly and sends it over.
+- **Dependencies:** Since libraries (like React or Lodash) can have thousands of internal files, Vite **pre-bundles** them into single files using **esbuild** so the browser doesn't get overwhelmed with 5,000 requests at once.
 
 ### In Production (npm run build)
 
 **No, it does NOT leave it to the browser.**
 For production, Vite becomes a traditional bundler (using **Rollup**).
 
-* It crawls your entire project and merges your code and your dependencies together into highly optimized, minified chunks (usually in a `dist/` folder).
-* **Why?** Even though modern browsers support imports, loading 200 small files over the internet is still slower than loading 2 or 3 optimized ones due to network latency.
+- It crawls your entire project and merges your code and your dependencies together into highly optimized, minified chunks (usually in a `dist/` folder).
+- **Why?** Even though modern browsers support imports, loading 200 small files over the internet is still slower than loading 2 or 3 optimized ones due to network latency.
 
-| Feature | Development (Vite) | Production (Vite) |
-| --- | --- | --- |
-| **Bundling** | **Unbundled** (Your code is served as individual files). | **Bundled** (Everything is merged and optimized). |
-| **Speed** | **Instant** (No waiting for a full project build). | **Thorough** (Focuses on smallest file size). |
-| **Tool Used** | Native ESM(**Babel** for HMR if react) + esbuild (for deps). | Rollup. |
-| **Browser's Job** | Handles the linking of modules. | Just executes the final optimized bundle. |
+| Feature           | Development (Vite)                                           | Production (Vite)                                 |
+| ----------------- | ------------------------------------------------------------ | ------------------------------------------------- |
+| **Bundling**      | **Unbundled** (Your code is served as individual files).     | **Bundled** (Everything is merged and optimized). |
+| **Speed**         | **Instant** (No waiting for a full project build).           | **Thorough** (Focuses on smallest file size).     |
+| **Tool Used**     | Native ESM(**Babel** for HMR if react) + esbuild (for deps). | Rollup.                                           |
+| **Browser's Job** | Handles the linking of modules.                              | Just executes the final optimized bundle.         |
 
 ---
+
+- vite preview: This will start a local server to preview the build
+- npx: will run the package without installing it
+
+<br />
+<br />
+<br />
+
+## ES-lint and other node packages
+
+### 1. The Extension is just a "Bridge"
+
+The VS Code ESLint extension does not actually know how to lint code. It is an interface that looks into your project’s `node_modules`, finds the `eslint` npm package, and runs it in the background to show you those red squiggles.
+
+If you don't have the npm package installed:
+
+- The extension will look for a **Global** version on your Mac.
+- If you don't have a global version, the extension simply **won't work**.
+- Even if you have a global version, using it is risky because your teammate might have a different global version, leading to "It works on my machine" bugs.
+
+### 2. Version Locking
+
+By installing `eslint` as an npm package in your `package.json`, you are **locking the version**.
+
+- **Without the package:** Your VS Code might use ESLint v9, while your teammate uses v8. You will see different errors on the exact same code.
+- **With the package:** Everyone who runs `npm install` gets the exact same version of the linter.
+
+### 3. CI/CD and Automated Checks
+
+The VS Code extension only works when you have the file open.
+
+- **Vercel/GitHub Actions:** When you push code to Vercel, it doesn't "open VS Code." It runs a script. If `eslint` isn't in your `package.json`, your build pipeline can't run `npm run lint` to verify the code quality before deploying.
+- **Husky/Pre-commit:** If you want to prevent people from committing "bad" code, your git hooks need the npm package to run the check automatically in the terminal.
+
+---
+
+| Component                  | Role                                | Analogy       |
+| -------------------------- | ----------------------------------- | ------------- |
+| **`eslint` (npm package)** | The logic that analyzes the code.   | The Engine    |
+| **`eslint.config.js` (file)**  | The list of rules to follow.        | The Rulebook  |
+| **ESLint Extension**       | Displays the errors in your editor. | The Dashboard |
+
+```
+prettier is for formatting the code while
+Eslint is for watching the quality of the code and the best practices.
+the two are different and save different purposes.
+both are important for good quality projects.
+you can make a prettier config and make it run each time someone made a commit to the git by using something like husky so you no longer need to set up formatting rules in eslint.
+```
