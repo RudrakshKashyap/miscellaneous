@@ -177,3 +177,4 @@ Lists DNS servers assigned via DHCP or manual config.
 *   **A Record (Address Record):** The most basic DNS record. It points a domain name (like `example.com`) directly to an **IP address** (like `192.0.2.1`).
 *   **AAAA Record:** The same as an A record, but for IPv6 addresses.
 *   **CNAME Record (Canonical Name Record):** This **does not** point to an IP address. Instead, it points to **another domain name**. Think of it as an alias. If `blog.example.com` is a CNAME for `hostingplatform.com`, then when you look up `blog.example.com`, DNS will go check the IP address of `hostingplatform.com` and return that.
+* A **Public DNS PTR (Pointer) Record** is the "reverse" of a standard DNS A record. While an A record maps a domain (like `example.com`) to an IP address, a PTR record maps an **IP address back to a domain**.
