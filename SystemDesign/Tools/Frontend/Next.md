@@ -85,6 +85,28 @@ const Page = async ({ params }: { params: { slug: string } }) => {
 
 ---
 
+[![alt text](../../../Images/image7.png)](https://nextjs.org/docs/app/getting-started/server-and-client-components)
+
+## Loading.js
+
+| Component Type | Wrapped by `loading.js`? | Behavior |
+| :--- | :--- | :--- |
+| **`page.tsx`** | **YES** | The most common use case. |
+| **Nested Routes** | **YES** | Wraps all sub-pages unless they have their own `loading.js`. |
+| **`layout.tsx`** | **NO** | The layout stays static while the loading state replaces the children. |
+| **Internal Components** | **NO** | Components *inside* the page must be manually wrapped in `<Suspense>` if they fetch data independently. |
+
+
+> When you prefix a variable with `NEXT_PUBLIC_`(even in .env file), Next.js inlines the value into the browser's JavaScript bundle during the build process.
+
+## Error: `useSearchParams()` should be wrapped in a suspense boundary
+
+1. **Static Rendering by Default**: To make your application as fast as possible, Next.js tries to statically pre-render all of your pages at build time.
+2. **Missing Information at Build Time**: The `useSearchParams()` hook relies on the URL query string (like `?lat=12&lng=77`). Because the URL can change depending on the user, Next.js has no way of knowing what these search parameters will be when it is building the app.
+3. **The Bailout**: If Next.js encounters `useSearchParams()` without a `<Suspense>` boundary, it throws its hands up and says "I can't statically build this page." It will then bail out of static rendering and fallback to rendering the entire page dynamically on the client-side at runtime, which hurts performance.
+4. **How Suspense Fixes It**: By wrapping the component that consumes `useSearchParams()` inside a `<Suspense>` boundary, you are telling Next.js: "Go ahead and statically build the rest of the layout right now. When the user actually visits the page, show the fallback temporarily, and then execute this specific block of code on the client side once you know the real search params."
+
+
 <!-- TODO -->
 
 * https://nextjs.org/docs/app/api-reference/config/next-config-js

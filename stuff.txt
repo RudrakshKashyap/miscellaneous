@@ -1,1 +1,4 @@
  deleted YT video download - http://web.archive.org/web/2oe_/http://wayback-fakeurl.archive.org/yt/PASTE_URL_HERE
+ // phone pe pg redirect
+          const redirectUrl = resp?.data?.message?.redirectionUrl;
+          window.location.href = redirectUrl;

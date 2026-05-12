@@ -35,9 +35,9 @@ The "Build Time" approach (think Gatsby, Jekyll, or Next.js default).
 
 The "Hybrid" approach, popularized by Next.js.
 
-* **How it works:** You get the speed of SSG, but with the ability to update pages in the background. You set a "revalidate" timer (e.g., 60 seconds). After that time, the next visitor triggers a background rebuild of just that one page.
+* **How it works:** You get the speed of SSG, but with the ability to update pages in the background. You set a "revalidate" timer (e.g., 60 seconds). After that time, the next visitor triggers a background rebuild of just that one page. 
 * **Pros:** Scales to millions of pages without long build times; stays relatively fresh.
-* **Cons:** Users might see "stale" (old) data for a short period until the background update finishes.
+* **Cons:** Users might see "stale" (old) data for a short period until the background update finishes. The user who triggers the revalidation gets the stale (old) data.
 
 ---
 
