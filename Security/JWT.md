@@ -1,7 +1,7 @@
-
 <img src="https://cdn.sanity.io/images/3jwyzebk/production/c098fa07deca1062e013d92cabba4ba7ec7e7f19-1584x988.png?auto=format&fit=max&w=1920&q=75" width="50%" height="auto">
 
 ## Session vs JWT
+
 - https://www.youtube.com/watch?v=GhrvZ5nUWNg
 - https://www.youtube.com/watch?v=fyTxwIa-1U0
 
@@ -20,46 +20,50 @@ Here is why the **Access + Refresh** combo is the industry standard:
 ---
 
 ### 1. The Security "Checkpoint"
+
 The fundamental problem with JWT Access Tokens is that they are **stateless**. Once the server issues one, it cannot "cancel" it (without complex blacklisting).
 
-* **Scenario A: Long-Lived Access Token (The Risk)**
-    * You issue a token valid for 7 days.
-    * A hacker steals it via an XSS attack.
-    * **Result:** The hacker has full access to your bank account for 7 days. Even if you change your password, the hacker's token still works because the token itself says "I am valid for 7 days."
+- **Scenario A: Long-Lived Access Token (The Risk)**
+  - You issue a token valid for 7 days.
+  - A hacker steals it via an XSS attack.
+  - **Result:** The hacker has full access to your bank account for 7 days. Even if you change your password, the hacker's token still works because the token itself says "I am valid for 7 days."
 
-* **Scenario B: Short Access + Long Refresh (The Solution)**
-    * **Access Token:** Valid for **15 minutes**.
-    * **Refresh Token:** Valid for **7 days**.
-    * **The Flow:** The user uses the Access Token. After 15 minutes, it dies. The app silently sends the **Refresh Token** to the server to ask: *"Can I have a new Access Token, please?"*
-    * **The Checkpoint:** This moment—the "refresh" request—is the **only time** the server checks its database.
-    * **Security Win:** If you banned the user or they changed their password 5 minutes ago, the server sees this during the refresh request and **denies** the new token. The hacker is locked out immediately after the 15-minute window closes.
-
-
+- **Scenario B: Short Access + Long Refresh (The Solution)**
+  - **Access Token:** Valid for **15 minutes**.
+  - **Refresh Token:** Valid for **7 days**.
+  - **The Flow:** The user uses the Access Token. After 15 minutes, it dies. The app silently sends the **Refresh Token** to the server to ask: _"Can I have a new Access Token, please?"_
+  - **The Checkpoint:** This moment—the "refresh" request—is the **only time** the server checks its database.
+  - **Security Win:** If you banned the user or they changed their password 5 minutes ago, the server sees this during the refresh request and **denies** the new token. The hacker is locked out immediately after the 15-minute window closes.
 
 ### 2. Safer Storage Options
+
 Because the Access Token is needed for every single API request, it is often kept in JavaScript memory (which is vulnerable to XSS) or a standard cookie.
 
 However, the **Refresh Token** is only used once every 15–30 minutes. This allows you to store it more securely:
-* You can put the Refresh Token in an **`HttpOnly` Cookie** with a specific path (`/refresh-token`).
-* This means JavaScript cannot touch it. Even if a hacker injects code into your site, they can steal the Access Token (valid for only 15 mins) but they **cannot steal the Refresh Token**.
-* Once the short Access Token expires, the hacker has nothing. They cannot renew it.
+
+- You can put the Refresh Token in an **`HttpOnly` Cookie** with a specific path (`/refresh-token`).
+- This means JavaScript cannot touch it. Even if a hacker injects code into your site, they can steal the Access Token (valid for only 15 mins) but they **cannot steal the Refresh Token**.
+- Once the short Access Token expires, the hacker has nothing. They cannot renew it.
 
 ### 3. Refresh Token Rotation (Advanced Security)
+
 To make this even tighter, banks and secure apps use **Token Rotation**(generally by changing the date field in token).
-* Every time you use a Refresh Token to get a new Access Token, the server **also issues a new Refresh Token** and invalidates the old one.
-* If a hacker manages to steal your Refresh Token and tries to use it, the server sees that an "old" Refresh Token is being used.
-* The server concludes: *"This is theft."* It immediately invalidates **all** tokens for that user, forcing everyone to log in again.
+
+- Every time you use a Refresh Token to get a new Access Token, the server **also issues a new Refresh Token** and invalidates the old one.
+- If a hacker manages to steal your Refresh Token and tries to use it, the server sees that an "old" Refresh Token is being used.
+- The server concludes: _"This is theft."_ It immediately invalidates **all** tokens for that user, forcing everyone to log in again.
 
 ### Summary Comparison
 
-| Feature | **Long-Lived Access Token** | **Short Access + Refresh Token** |
-| :--- | :--- | :--- |
-| **If stolen...** | Hacker has access for days/weeks. | Hacker has access for minutes. |
-| **Revoking access** | Very difficult (requires waiting for expiry). | Fast (happens at the next "refresh" interval). |
-| **Server Load** | Very Low (No DB checks). | Low (DB check only occurs once every 15-30 mins). |
-| **User Experience** | User stays logged in. | User stays logged in (refresh happens in background). |
+| Feature             | **Long-Lived Access Token**                   | **Short Access + Refresh Token**                      |
+| :------------------ | :-------------------------------------------- | :---------------------------------------------------- |
+| **If stolen...**    | Hacker has access for days/weeks.             | Hacker has access for minutes.                        |
+| **Revoking access** | Very difficult (requires waiting for expiry). | Fast (happens at the next "refresh" interval).        |
+| **Server Load**     | Very Low (No DB checks).                      | Low (DB check only occurs once every 15-30 mins).     |
+| **User Experience** | User stays logged in.                         | User stays logged in (refresh happens in background). |
 
 ---
+
 <br/>
 
 ## Why not use single short lived access token as secure cookie
@@ -68,15 +72,15 @@ They can look similar, but they make different trade-offs. The two-token model (
 
 In security, we want to limit where sensitive credentials are sent.
 
-**Two-token**: recommended pattern is to keep refresh in HttpOnly cookie and put access token in memory and send it in Authorization header — this avoids CSRF on API calls because browsers don’t auto-send Authorization headers. But access token stored in JS is vulnerable to XSS unless you keep it in memory only and clear on navigation.
+**[Two-token](https://auth0.com/docs/secure/security-guidance/data-security/token-storage#traditional-web-app)**: recommended pattern is to keep refresh in HttpOnly cookie and put access token in memory and send it in Authorization header — this avoids CSRF on API calls because browsers don’t auto-send Authorization headers. But access token stored in JS is vulnerable to XSS unless you keep it in memory only and clear on navigation.
 
-* **Standard Method:**
-    * **Access Token:** Sent to *every* endpoint (Product Service, Comment Service, Image Service, Logging Service). If one of these services logs the header or is compromised, the attacker gets a token that only lasts 15 minutes.
-    * **Refresh Token:** Sent **only** to the `/auth/refresh` endpoint. It is never seen by the other parts of your application.
+- **Standard Method:**
+  - **Access Token:** Sent to _every_ endpoint (Product Service, Comment Service, Image Service, Logging Service). If one of these services logs the header or is compromised, the attacker gets a token that only lasts 15 minutes.
+  - **Refresh Token:** Sent **only** to the `/auth/refresh` endpoint. It is never seen by the other parts of your application.
 
-* **Your Proposal:**
-    * You are sending the token that has the power to "renew itself" (the equivalent of a Refresh Token) to *every single endpoint* in your system.
-    * If your "Image Upload Service" has a vulnerability or aggressive logging, and it leaks your single token, the attacker can use that token to keep generating new tokens indefinitely (until your max session limit).
+- **Your Proposal:**
+  - You are sending the token that has the power to "renew itself" (the equivalent of a Refresh Token) to _every single endpoint_ in your system.
+  - If your "Image Upload Service" has a vulnerability or aggressive logging, and it leaks your single token, the attacker can use that token to keep generating new tokens indefinitely (until your max session limit).
 
 <br >
 <br >
@@ -92,18 +96,16 @@ Core Security Problem: [The Browser is a Leaky Place](https://www.youtube.com/wa
 
 ### Key OAuth 2.0 Roles
 
-* **Resource Owner:** The user who owns the protected resources (data) and can grant access.
-* **Client:** The application (e.g., a mobile app, web app) that wants to access the Resource Owner's protected resources. It must be registered with the Authorization Server.
-* **Authorization Server:** The server that authenticates the Resource Owner and, upon consent, issues an **Access Token** to the Client.
-* **Resource Server:** The server that hosts the protected resources (APIs) and accepts Access Tokens from the Client to grant access.
+- **Resource Owner:** The user who owns the protected resources (data) and can grant access.
+- **Client:** The application (e.g., a mobile app, web app) that wants to access the Resource Owner's protected resources. It must be registered with the Authorization Server.
+- **Authorization Server:** The server that authenticates the Resource Owner and, upon consent, issues an **Access Token** to the Client.
+- **Resource Server:** The server that hosts the protected resources (APIs) and accepts Access Tokens from the Client to grant access.
 
 ---
 
 ## 🔁 Authorization Code Flow (Recommended Flow)
 
 The Authorization Code flow is considered the most secure and is the standard for confidential clients (like server-side web applications) and public clients (like Single-Page Applications and Mobile Apps) when paired with PKCE.
-
-
 
 ### Steps in the Authorization Code Flow
 
@@ -122,10 +124,10 @@ The Implicit flow was designed for browser-based, public clients (like SPAs) tha
 
 ### Key Characteristics of Implicit Flow
 
-* **Token in URL Fragment:** The Access Token is returned directly to the browser in the URL fragment (`#` part of the URL) after step 3, bypassing the token exchange step (Steps 4 & 5).
-* **No Authorization Code:** The `response_type` is typically `token` (or `id_token token` for OIDC), meaning the token is issued immediately, not an authorization code.
-* **Vulnerability:** Since the token is exposed in the browser's URL (history, referrer headers) and is handled by client-side JavaScript, it is highly susceptible to leakage and interception (e.g., via XSS attacks).
-* **No Refresh Token:** It typically does not allow for a Refresh Token, forcing reliance on short-lived Access Tokens.
+- **Token in URL Fragment:** The Access Token is returned directly to the browser in the URL fragment (`#` part of the URL) after step 3, bypassing the token exchange step (Steps 4 & 5).
+- **No Authorization Code:** The `response_type` is typically `token` (or `id_token token` for OIDC), meaning the token is issued immediately, not an authorization code.
+- **Vulnerability:** Since the token is exposed in the browser's URL (history, referrer headers) and is handled by client-side JavaScript, it is highly susceptible to leakage and interception (e.g., via XSS attacks).
+- **No Refresh Token:** It typically does not allow for a Refresh Token, forcing reliance on short-lived Access Tokens.
 
 ---
 
@@ -143,7 +145,7 @@ The Implicit flow was designed for browser-based, public clients (like SPAs) tha
 
 ### PKCE Benefits
 
-* **Mitigates Authorization Code Interception:** If a malicious party intercepts the Authorization Code, they cannot exchange it for an Access Token because they do not have the secret `code_verifier`.
-* **Secures Public Clients:** Allows public clients to use the secure Authorization Code flow without relying on a non-existent or easily compromised `client_secret`.
+- **Mitigates Authorization Code Interception:** If a malicious party intercepts the Authorization Code, they cannot exchange it for an Access Token because they do not have the secret `code_verifier`.
+- **Secures Public Clients:** Allows public clients to use the secure Authorization Code flow without relying on a non-existent or easily compromised `client_secret`.
 
 ---
