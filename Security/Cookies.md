@@ -29,6 +29,14 @@ Set-Cookie: user_id=12345; Secure; HttpOnly
   - `Strict`: Sent only for first-party requests. Cookies are only sent with requests originating from the same site, providing the strongest protection.
   - `Lax`(relaxed ): is fundamentally designed to block cookies on cross-site requests that use "unsafe" methods like POST, meaning it primarily works on "safe" methods like GET. The request must result in a change of the URL in the browser's address bar (e.g., clicking a link).
   - `None`: Sent with all requests (requires `Secure` flag). Avoid it.
+- **`Partitioned` flag (CHIPS):** This flag prevents cross-site tracking while still allowing legitimate third-party services (like embedded chat widgets or payment gateways) to function using cookies.
+  - **The Problem:** Traditionally, if Site A embedded an "Ad" widget, the "Ad" site could set a cookie (`SameSite=None`). If you then visited Site B, which also embedded the "Ad" widget, the browser would send that *same* cookie to the "Ad" site. This allowed the "Ad" site to track you across both websites. Because of this privacy violation, modern browsers are blocking unpartitioned third-party cookies.
+  - **The Solution:** When a cookie is marked as `Partitioned`, its storage is "sandboxed" or tied to the top-level site you are currently visiting.
+  - **How it works (Example):**
+    1. You visit Site A. Site A embeds an "Ad" widget. The "Ad" site sets a `Partitioned` cookie. The browser stores this in a specific partition: `(Site A + Ad Site)`.
+    2. You then visit Site B. Site B also embeds the "Ad" widget.
+    3. The browser will **not** send the cookie created on Site A to the "Ad" site, because the browser looks in the `(Site B + Ad Site)` partition, which is currently empty.
+    4. The "Ad" widget on Site B gets a fresh state and cannot link your activity between Site A and Site B.
 
 ---
 

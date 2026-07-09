@@ -209,3 +209,15 @@ apps/dashboard/node_modules/@workspace/ui (symlink)
 ```
 
 > One mental model: the global store is the **warehouse** (real goods, one copy), root `.pnpm` is your repo's **shelf** (labeled links to the warehouse), and each workspace's `node_modules` is a small **basket** holding only the items that workspace ordered.
+
+---
+
+```text
+pnpm lint
+└─ turbo lint                       (turbo.json: dependsOn ^lint → topological order)
+   ├─ packages/ui        → eslint   → ui/eslint.config.js
+   │                                   → @workspace/eslint-config/react-library
+   └─ apps/dashboard     → eslint   → dashboard/eslint.config.js
+                                       → @workspace/eslint-config/vite-app
+   (eslint-config, typescript-config, root → no lint script → skipped)
+```
