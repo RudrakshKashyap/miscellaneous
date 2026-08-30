@@ -1,0 +1,118 @@
+%=========================================================
+% Rudraksh Kashyap - Resume
+% Tailored for: Booking.com | Full Stack Software Engineer I (ASI / Flights Ancillaries)
+% Compile: pdflatex resume_booking_fullstack.tex
+%=========================================================
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=0.5in,top=0.45in,bottom=0.45in]{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{accent}{HTML}{2E5E8C}
+\hypersetup{colorlinks=true, urlcolor=accent, linkcolor=accent}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\tabcolsep}{0pt}
+
+% ---- section style: blue small-caps + rule -------------
+\titleformat{\section}
+  {\color{accent}\scshape\large\bfseries}{}{0em}{}
+  [\vspace{-6pt}{\color{accent}\rule{\textwidth}{0.8pt}}]
+\titlespacing*{\section}{0pt}{7pt}{4pt}
+
+% ---- helpers -------------------------------------------
+\newcommand{\heading}[4]{%
+  \begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}r@{}}
+    \textbf{#1} & \textbf{#2} \\
+    \textit{#3} & \textit{#4} \\
+  \end{tabular*}\vspace{2pt}}
+
+\newcommand{\headingone}[2]{%
+  \begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}r@{}}
+    \textbf{#1} & \textit{#2} \\
+  \end{tabular*}\vspace{1pt}}
+
+\newlist{bullets}{itemize}{1}
+\setlist[bullets]{label=\textbullet, leftmargin=1.3em, topsep=2pt,
+                  itemsep=1.5pt, parsep=0pt, partopsep=0pt}
+
+\newcommand{\skillrow}[2]{\textbf{#1:} #2 \\[1.5pt]}
+
+%=========================================================
+\begin{document}
+
+% ------------------------- HEADER -----------------------
+\begin{center}
+  {\Huge\scshape Rudraksh Kashyap} \\[5pt]
+  \small
+  Bangalore, KA, India \;$|$\; +91 7689814356 \;$|$\;
+  \href{mailto:rudrakshk@iitbhilai.ac.in}{rudrakshk@iitbhilai.ac.in} \\[2pt]
+  \href{https://github.com/YOUR-GITHUB}{GitHub} \;$|$\;
+  \href{https://linkedin.com/in/YOUR-LINKEDIN}{LinkedIn} \;$|$\;
+  \href{https://codeforces.com/profile/YOUR-HANDLE}{Codeforces: Expert} \;$|$\;
+  \href{https://leetcode.com/YOUR-HANDLE}{LeetCode: 2000+}
+\end{center}
+\vspace{-4pt}
+
+% ------------------------- SKILLS -----------------------
+\section{Technical Skills}
+\small
+\skillrow{Languages}{TypeScript, JavaScript (ES6+), SQL, C/C++, Python, HTML5/CSS3}
+\skillrow{Backend \& Architecture}{Node.js, NestJS, REST API Design, Microservices, Service-Oriented Architecture, Distributed Systems}
+\skillrow{Frontend}{React.js, Next.js, TanStack Router/Query, Redux, Zustand, Tailwind CSS v4, Shadcn UI, Design Systems}
+\skillrow{Databases \& Cloud}{MySQL (indexing, query tuning, execution plans), Redis, AWS (EKS, CloudWatch, CodeBuild, OpenSearch), GCP}
+\skillrow{DevOps \& Observability}{Docker, Kubernetes, Turborepo, GitHub Actions (CI/CD), Grafana, SLOs \& Alerting, Git, Linux}
+\skillrow{Data-Driven Product}{Experiment/metrics instrumentation, Google Analytics (GA4), Google Tag Manager, WebEngage, Search Console}
+
+% ------------------------ EXPERIENCE --------------------
+\section{Work Experience}
+\heading{PlatinumRx}{Bangalore, KA}{Software Engineer -- Full Stack}{Dec 2025 -- Present}
+\begin{bullets}\small
+  \item \textbf{End-to-end feature ownership:} Full-stack engineer on the Fulfillment \& Operations team owning the post-order lifecycle; ship features across multiple NestJS/TypeScript modules from REST API contract design through production deployment, including refresh-token authentication with cookie-based sessions, and version gating with percentage-based rollout for the real-time, multi-warehouse/multi-carrier Estimated Delivery Date engine.
+  \item \textbf{Performance \& cost:} Cut the worst offenders among high-traffic MySQL queries from \textasciitilde30s to 1--2s by profiling DB logs and execution plans, rewriting the queries and adding strategic indexes; audited and overhauled GCP Geocode API consumption to cut spend by over 10x; supported the Next.js migration from Vercel to GCP.
+  \item \textbf{Full-stack frontend architecture:} Built greenfield React/TypeScript applications (TanStack Router \& Query, Zustand, custom Shadcn design system) inside a Turborepo monorepo with GitHub Actions CI/CD.
+  \item \textbf{Reliability \& incident response:} Configured AWS CloudWatch alerts routed into Google Chat for rapid incident response; track service reliability and performance SLOs daily via Grafana dashboards.
+  \item \textbf{Metrics-driven iteration:} Instrumented conversion and funnel events across customer-facing flows via GTM, GA4 and WebEngage, and acted on GSC data to drive product and SEO improvements.
+\end{bullets}
+
+
+\vspace{3pt}
+\heading{Brigosha Technologies}{Bangalore, KA}{Junior Research Engineer -- Full Stack}{July 2022 -- Dec 2023}
+\begin{bullets}\small
+  \item \textbf{System architecture from scratch:} Designed relational schemas and TypeScript/NestJS microservices for an enterprise course marketplace (aulas.in), owning both backend services and frontend delivery.
+  \item \textbf{Interactive React UI:} Built performant React/Redux components that eliminated redundant network calls, measurably improving perceived load time and user experience.
+  \item \textbf{Real-time analytics:} Re-architected the analytics processing pipeline from batch jobs to real-time streaming.
+  \item \textbf{Recognition:} Employee of the Year and Rising Star Award for technical execution and delivery speed.
+\end{bullets}
+
+% ------------------- FOUNDATIONS ------------------------
+\section{Systems Engineering \& Advanced Foundations}
+\headingone{Independent Deep-Dive \& Competitive Programming}{Jan 2024 -- Dec 2025}
+\begin{bullets}\small
+  \item \textbf{Distributed systems:} CAP trade-offs and consistency models, consensus (Raft), replication and sharding, Kafka-based message streaming, Redis caching strategies, microservice communication patterns.
+  \item \textbf{Core computer science:} Operating system internals (paging, epoll, IPC, context switching), networking (TCP/UDP, TLS, HTTP internals), database internals (B+Trees, LSM trees, indexing, execution plans), web security (JWT/sessions, OAuth2 + PKCE, XSS/CSRF).
+  \item \textbf{Algorithms:} Codeforces Expert and LeetCode 2000+ through sustained competitive programming in C++.
+\end{bullets}
+
+% --------------------- PROJECTS -------------------------
+\section{Technical Projects}
+\headingone{High-Performance Mobile Computing Cluster \normalfont{-- C++, MPI, Buildroot, Linux}}{Aug 2021}
+\begin{bullets}\small
+  \item Engineered an MPI-based cluster of rooted Android devices to execute distributed parallel workloads; cross-compiled the MPICH library with a Buildroot ARM-EABI toolchain to run directly on the mobile terminal.
+\end{bullets}
+
+% -------------------- EDUCATION -------------------------
+\section{Education \& Languages}
+\heading{Indian Institute of Technology (IIT) Bhilai}{Bhilai, CG}{B.Tech, Electrical Engineering -- GPA: 7.41/10}{2018 -- 2022}
+\vspace{2pt}
+\small\textbf{Languages:} English (Proficient), Hindi (Native), Japanese (JLPT N2 level)
+
+\end{document}

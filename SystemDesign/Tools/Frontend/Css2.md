@@ -1,8 +1,6 @@
 ## [CSS dev tools](https://www.youtube.com/watch?v=Qf_5zmxrxzE)
 
-
 ## rem vs em - 1rem is strictly tied to the root of the document (usually the <html> tag), while 1em adapts to the font size of its immediate parent element.
-
 
 Because the parent is flex flex-col flex children don't stretch along the main axis by default — they size to their content. So the grid only gets as tall as its tallest row needs.
 Add flex-1 min-h-0 to the grid div:
@@ -16,7 +14,6 @@ CSS gives every flex item a hidden default: min-height: auto, which means "don't
 Result: the body overflows the parent. Your scroll behavior breaks because the body grew the parent instead of staying inside it
 
 min-h-0 overrides min-height: auto and says: "you may shrink as small as needed."
-
 
 ---
 
@@ -32,7 +29,6 @@ other one is `box-sizing: content-box;` where width and height applied to conten
 
 <div class="border-red-500 h-10 w-10 m-5 p-2 border-2 border-solid">
 </div>
-
 
 ```
  ┌───────────────────────────────────────────────┐
@@ -61,7 +57,6 @@ margin   border  padding  content  padding border   margin
 
 **Border-box** means `w-10`/`h-10` measure the **outer edge** (border included), so border + padding eat into the content, shrinking it from 40 → 20. Margin always sits **outside** the box and adds to the footprint.
 
-
 `<div>` vs `<p>` tag
 
 - `<div>` — generic, **semantic-less** block container. Used for layout/grouping. Can nest anything (including other divs, p, headings, etc.).
@@ -75,61 +70,68 @@ Key trap: putting a `<div>` (or any block element) inside a `<p>` is invalid HTM
 
 Use `<p>` for actual prose (accessibility + SEO read it as a paragraph); use `<div>` for structure and styling.
 
-
 ## Difference bw all `display` keyword properties
 
-`display` controls **two things**: how the box behaves in the *outer* flow (block vs inline), and how its *children* are laid out (the inner formatting context).
+`display` controls **two things**: how the box behaves in the _outer_ flow (block vs inline), and how its _children_ are laid out (the inner formatting context).
 
 ### The core values
 
-| value | flow | starts new line? | respects w/h? | margin/padding | typical use |
-|---|---|---|---|---|---|
-| `block` | block | yes (full width) | ✅ all | ✅ all 4 sides | `<div>`, `<p>`, `<section>` |
-| `inline` | inline | no (flows in text) | ❌ ignored | ↔ horizontal only* | `<span>`, `<a>`, `<strong>` |
-| `inline-block` | inline | no | ✅ all | ✅ all 4 sides | chips, buttons in a row |
-| `flex` | block | yes | ✅ | ✅ | 1-D layout (row/col) |
-| `inline-flex` | inline | no | ✅ | ✅ | flex box sitting in text |
-| `grid` | block | yes | ✅ | ✅ | 2-D layout (rows + cols) |
-| `inline-grid` | inline | no | ✅ | ✅ | grid sitting in text |
-| `none` | — | removed entirely | — | — | hide (no space reserved) |
-| `contents` | — | box disappears, children promoted | — | — | unwrap a wrapper |
-| `table` / `table-*` | block | yes | ✅ | ✅ | mimic `<table>` behavior |
-| `list-item` | block | yes | ✅ | ✅ | generates a marker (•) |
-| `flow-root` | block | yes | ✅ | ✅ | new BFC → clears floats |
+| value               | flow   | starts new line?                  | respects w/h? | margin/padding      | typical use                 |
+| ------------------- | ------ | --------------------------------- | ------------- | ------------------- | --------------------------- |
+| `block`             | block  | yes (full width)                  | ✅ all        | ✅ all 4 sides      | `<div>`, `<p>`, `<section>` |
+| `inline`            | inline | no (flows in text)                | ❌ ignored    | ↔ horizontal only\* | `<span>`, `<a>`, `<strong>` |
+| `inline-block`      | inline | no                                | ✅ all        | ✅ all 4 sides      | chips, buttons in a row     |
+| `flex`              | block  | yes                               | ✅            | ✅                  | 1-D layout (row/col)        |
+| `inline-flex`       | inline | no                                | ✅            | ✅                  | flex box sitting in text    |
+| `grid`              | block  | yes                               | ✅            | ✅                  | 2-D layout (rows + cols)    |
+| `inline-grid`       | inline | no                                | ✅            | ✅                  | grid sitting in text        |
+| `none`              | —      | removed entirely                  | —             | —                   | hide (no space reserved)    |
+| `contents`          | —      | box disappears, children promoted | —             | —                   | unwrap a wrapper            |
+| `table` / `table-*` | block  | yes                               | ✅            | ✅                  | mimic `<table>` behavior    |
+| `list-item`         | block  | yes                               | ✅            | ✅                  | generates a marker (•)      |
+| `flow-root`         | block  | yes                               | ✅            | ✅                  | new BFC → clears floats     |
 
 \* `inline`: vertical margin/padding **render visually** but don't push surrounding lines apart, and width/height are simply ignored.
 
 ### What each value actually does
 
 **`block`** — the box becomes a vertical brick.
+
 - Takes the **full width** of its parent (even if content is tiny).
 - Forces a line break before and after → siblings stack top-to-bottom.
 - Honors `width`, `height`, and all four margins/paddings.
+
 ```
 [ block A ──────────────────────────── ] (full width)
 [ block B ──────────────────────────── ]
 ```
 
 **`inline`** — the box flows inside a line of text, like a word.
+
 - **No line break** — sits next to other inline content.
 - **Ignores `width`/`height`** and vertical margins (you can't size it).
 - Only horizontal margin/padding push neighbors.
+
 ```
 text text [inlineA][inlineB] text text wraps →
 ```
 
-**`inline-block`** — flows on a line *but* is a real box.
+**`inline-block`** — flows on a line _but_ is a real box.
+
 - Sits next to neighbors (no forced line break) like `inline`…
 - …**but respects `width`/`height` and all margins/padding** like `block`.
 - Use for sized things in a row (badges, nav items) without flex/grid.
+
 ```
 [ boxA ] [ boxB ] [ boxC ]   ← all on one line, each sized
 ```
 
 **[`flex`](https://www.youtube.com/watch?v=wsTv9y931o8)** — turns the element into a **1-D layout container**.
+
 - The element itself is still block-level.
 - Its **direct children become flex items**, laid out along one axis (`flex-direction: row` default, or `column`).
 - Unlocks `justify-content`, `align-items`, `gap`, `flex-grow/shrink`.
+
 ```
 flex-direction: row →  [child][child][child]
 flex-direction: col ↓  [child]
@@ -144,7 +146,7 @@ flex-direction: col ↓  [child]
 
 - **`flex-grow`** (default `0`) — how much of the **leftover free space** this item soaks up, as a ratio vs siblings. `flex-grow: 1` on all = equal share; `2` takes twice as much as a `1`.
 - **`flex-shrink`** (default `1`) — how much the item is allowed to **shrink** when there isn't enough room. `0` = never shrink (can cause overflow); higher = gives up size faster.
-- **`flex-basis`** (default `auto`) — the item's **starting/ideal size** along the main axis *before* `grow`/`shrink` redistribute the leftover space. Think of it as "what size do I *want* to be?"; grow/shrink then adjust from there.
+- **`flex-basis`** (default `auto`) — the item's **starting/ideal size** along the main axis _before_ `grow`/`shrink` redistribute the leftover space. Think of it as "what size do I _want_ to be?"; grow/shrink then adjust from there.
   - `auto` → fall back to the item's `width` (or `height` in a column), or its content size if neither is set.
   - a length/percent (`200px`, `30%`) → that becomes the base size, and it **overrides `width`** on the main axis when both are set.
   - `0` → ignore content entirely; the item's size is decided **purely by `flex-grow` ratios** (this is why `flex: 1` = `1 1 0%` gives perfectly equal columns).
@@ -165,7 +167,8 @@ flex-direction: col ↓  [child]
 
 > Setting width: 300px locks the element's baseline to that size. Conversely, setting flex-basis: 300px means: "Start at 300px, then modify my size if flex-grow or flex-shrink dictates it.
 
-  **`width` vs `flex-basis`:** on the main axis `flex-basis` wins. `width` only matters when `flex-basis: auto`. Set `flex-basis: 0` and you neutralize `width` for grow-based sizing.
+**`width` vs `flex-basis`:** on the main axis `flex-basis` wins. `width` only matters when `flex-basis: auto`. Set `flex-basis: 0` and you neutralize `width` for grow-based sizing.
+
 - **`flex`** — shorthand for the three above. Memorize these:
   - `flex: 1` → `1 1 0%` — all items equal width, ignore content size (classic "fill equally").
   - `flex: auto` → `1 1 auto` — grow/shrink but **start from content size** (bigger content → bigger item).
@@ -182,20 +185,21 @@ middle flex:none(80)→[ 110][  80  ][ 110 ]    (middle rigid, others split rest
 ```
 
 **Main axis vs cross axis** (depends on `flex-direction`):
+
 - `row` → main = horizontal, cross = vertical. `grow/shrink/basis` act on **width**; `align-self` on **height**.
 - `column` → main = vertical, cross = horizontal. They swap.
 
-**`flex-wrap` & `align-content`** — by default flex is single-line (`flex-wrap: nowrap`): items shrink/overflow rather than wrap. With **`flex-wrap: wrap`**, items that don't fit move to a **new line**, so you now have *multiple lines* stacked along the cross axis.
+**`flex-wrap` & `align-content`** — by default flex is single-line (`flex-wrap: nowrap`): items shrink/overflow rather than wrap. With **`flex-wrap: wrap`**, items that don't fit move to a **new line**, so you now have _multiple lines_ stacked along the cross axis.
 
-Mental shortcut: **`align-content` is to the cross axis what `justify-content` is to the main axis** — both distribute *free space between things*. `justify-content` spaces **items along the main axis**; `align-content` spaces **lines along the cross axis**.
+Mental shortcut: **`align-content` is to the cross axis what `justify-content` is to the main axis** — both distribute _free space between things_. `justify-content` spaces **items along the main axis**; `align-content` spaces **lines along the cross axis**.
 
-| axis | spacing items in a line | spacing the lines themselves |
-|---|---|---|
-| main | `justify-content` | — |
+| axis  | spacing items in a line  | spacing the lines themselves      |
+| ----- | ------------------------ | --------------------------------- |
+| main  | `justify-content`        | —                                 |
 | cross | `align-items` (per line) | `align-content` (the whole stack) |
 
 - **`justify-content`** — distributes items along the **main axis** (the direction they flow).
-- **`align-items`** — aligns items *within* a single line on the **cross axis**.
+- **`align-items`** — aligns items _within_ a single line on the **cross axis**.
 - **`align-content`** — distributes the **whole group of lines** along the **cross axis** (`flex-start | center | space-between | space-around | stretch`…). **Only has an effect when there are 2+ lines** (wrapping on); ignored on a single line.
 
 ```
@@ -206,9 +210,11 @@ flex-wrap: wrap, justify-content: end, 5 items, narrow container
     align-items aligns items WITHIN each line (cross axis)
 ```
 
-**[`grid`](https://www.youtube.com/watch?v=JYfiaSKeYhE)** — turns the element into a **2-D layout container** (rows *and* columns at once).
+**[`grid`](https://www.youtube.com/watch?v=JYfiaSKeYhE)** — turns the element into a **2-D layout container** (rows _and_ columns at once).
+
 - Children placed into a defined grid via `grid-template-columns/rows`.
 - Best when you control both axes (page layouts, card galleries).
+
 ```
 grid-template-columns: 1fr 1fr 1fr
 ┌──────┬──────┬──────┐
@@ -251,22 +257,24 @@ grid-template-columns: 1fr 1fr 1fr
 - **`none`** — element + children removed from render tree and accessibility tree; reserves **no space** (vs `visibility:hidden` which keeps the space, and `opacity:0` which keeps space + stays interactive).
 - **`contents`** — the element's own box vanishes but its children remain, as if they were direct children of the grandparent. Handy to make a wrapper "transparent" to a flex/grid parent. ⚠️ historically buggy for accessibility.
 - **`flow-root`** — establishes a new **Block Formatting Context**: contains floats (modern `clearfix`) and prevents margin-collapse with children.
-- **`flex` / `grid`** — change only how *children* lay out; the element itself is still a block by default.
-
+- **`flex` / `grid`** — change only how _children_ lay out; the element itself is still a block by default.
 
 ### `em` is relative to its parent element, while `rem` is relative to the root (`<html>`) element.
+
 ### (%) represents a relative measurement unit that calculates its size based on a `parent` element's property value, height should be expliclity defined in parent for it to work
 
 # zoom in - out (Ctrl +/−)
 
-**TL;DR:** page zoom scales the **CSS reference pixel itself**, so *everything* grows together — `px`, `em`, `rem`, `%`, images, layout. It does **not** change any `font-size` value or computed style.
+**TL;DR:** page zoom scales the **CSS reference pixel itself**, so _everything_ grows together — `px`, `em`, `rem`, `%`, images, layout. It does **not** change any `font-size` value or computed style.
 
 **What it changes**
-- **Everything scales proportionally**, including absolute `px`. At 150% zoom a `16px` font *renders* like `24px`, a `100px` box like `150px`.
+
+- **Everything scales proportionally**, including absolute `px`. At 150% zoom a `16px` font _renders_ like `24px`, a `100px` box like `150px`.
 - **`em` / `rem` scale too** — not because the root font-size changed, but because the px each resolves to is drawn bigger. `1rem` is still "16px" in CSS terms.
-- **Media queries can fire** — zoom changes the *effective* viewport width in CSS px, so zooming in ≈ shrinking the viewport. `@media (max-width: 768px)` can trigger.
+- **Media queries can fire** — zoom changes the _effective_ viewport width in CSS px, so zooming in ≈ shrinking the viewport. `@media (max-width: 768px)` can trigger.
 
 **What it does NOT change**
+
 - No `font-size`, root size, or computed length changes. `getComputedStyle` still reports `16px`. Zoom is a render-layer multiplier, not a style change.
 
 **Key contrast — page zoom vs. browser's default/minimum font-size setting**
@@ -275,15 +283,16 @@ grid-template-columns: 1fr 1fr 1fr
 | **Page zoom (Ctrl +/−)** | ✅ yes | ❌ no | no — scales everything |
 | **Default font-size setting** (a11y) | ❌ no | ✅ yes (e.g. 16→20px) | ✅ yes — `px` stays fixed |
 
-So the advice *"use `rem` for font sizes so users get larger text"* is about the **font-size setting**, not Ctrl-zoom. Ctrl-zoom enlarges a `px`-based site fine; `rem` matters for users who raise their browser's **default text size** for accessibility.
+So the advice _"use `rem` for font sizes so users get larger text"_ is about the **font-size setting**, not Ctrl-zoom. Ctrl-zoom enlarges a `px`-based site fine; `rem` matters for users who raise their browser's **default text size** for accessibility.
 
 ### Does changing window size change styles given by vh / vw?
 
-**Yes — they recalculate live as the viewport resizes.** `vw`/`vh` are relative to the *viewport*, not the page or any parent:
+**Yes — they recalculate live as the viewport resizes.** `vw`/`vh` are relative to the _viewport_, not the page or any parent:
+
 - `1vw` = 1% of viewport **width**, `1vh` = 1% of viewport **height**. So `50vw` is always half the window width — resize the window and it instantly re-measures.
 - Unlike `%` (relative to the **parent** element), `vw/vh` ignore the parent entirely and track the window.
 
-**Contrast with zoom:** resizing the window changes the *actual* viewport size → `vw/vh` change. Ctrl-zoom changes the *CSS px* but the viewport stays the same number of CSS px, so `vw/vh` values stay constant (they just render bigger like everything else).
+**Contrast with zoom:** resizing the window changes the _actual_ viewport size → `vw/vh` change. Ctrl-zoom changes the _CSS px_ but the viewport stays the same number of CSS px, so `vw/vh` values stay constant (they just render bigger like everything else).
 
 # **Mobile gotcha:** `100vh` includes the area under the browser's address bar on phones, causing the "jumpy 100vh" problem. Newer units fix it: **`svh`** (small — bar visible), **`lvh`** (large — bar hidden), **`dvh`** (dynamic — adjusts as the bar shows/hides).
 
@@ -295,15 +304,33 @@ So the advice *"use `rem` for font sizes so users get larger text"* is about the
 
 `position` controls how an element is placed and what `top/right/bottom/left` (the **insets**) are measured against.
 
-| value | in normal flow? | insets relative to | leaves a gap? |
-|---|---|---|---|
-| `static` (default) | yes | n/a — insets ignored | — |
-| `relative` | yes | **its own original spot** | yes (keeps its space) |
-| `absolute` | **no** (removed) | nearest **positioned** ancestor | no (collapses) |
-| `fixed` | no (removed) | the **viewport** | no |
-| `sticky` | yes | scroll container (toggles relative↔fixed) | yes |
+| value              | in normal flow?  | insets relative to                        | leaves a gap?         |
+| ------------------ | ---------------- | ----------------------------------------- | --------------------- |
+| `static` (default) | yes              | n/a — insets ignored                      | —                     |
+| `relative`         | yes              | **its own original spot**                 | yes (keeps its space) |
+| `absolute`         | **no** (removed) | nearest **positioned** ancestor           | no (collapses)        |
+| `fixed`            | no (removed)     | the **viewport**                          | no                    |
+| `sticky`           | yes              | scroll container (toggles relative↔fixed) | yes                   |
 
-**`relative`** — stays in flow, occupies its original space, then insets *nudge* it visually from that origin (other elements don't move). Its main job in practice: become the **positioning context** (anchor) for an `absolute` child.
+```css
+/* This element shifts 20px down and 50px right from its original spot */
+.box {
+  position: relative;
+  top: 20px;
+  left: 50px;
+  z-index: 2; /* Successfully lifts the box into a new visual layer */
+}
+
+/* This element cannot be moved or re-layered */
+.box {
+  position: static;
+  top: 20px; /* Ignored */
+  left: 50px; /* Ignored */
+  z-index: 10; /* Ignored */
+}
+```
+
+**`relative`** — stays in flow, occupies its original space, then insets _nudge_ it visually from that origin (other elements don't move). Its main job in practice: become the **positioning context** (anchor) for an `absolute` child.
 
 **`absolute`** — yanked out of flow (siblings close the gap), positioned against the **nearest ancestor with `position` other than `static`** — i.e. the nearest `relative/absolute/fixed/sticky` parent. If none exists, it falls back to the initial containing block (≈ the page/`<html>`).
 
@@ -321,7 +348,6 @@ So the advice *"use `rem` for font sizes so users get larger text"* is about the
 
 - **`fixed`** — like absolute but anchored to the **viewport**; stays put on scroll (sticky headers, modals).
 - **`sticky`** — hybrid: behaves `relative` until you scroll past a threshold (e.g. `top: 0`), then "sticks" like `fixed` within its scroll container.
-
 
 ## `<aside>` vs `<div>` — is it just a renamed div?
 
