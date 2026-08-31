@@ -1,0 +1,221 @@
+%=========================================================
+% 職務経歴書 - Rudraksh Kashyap (ルドラクシュ・カシヤップ)
+% Japanese-standard CV (shokumu keirekisho)
+%
+% !!! Overleaf: Menu > Compiler > LuaLaTeX  (pdfLaTeX will NOT work) !!!
+%=========================================================
+\documentclass[a4paper,10pt]{ltjsarticle}
+
+\usepackage[haranoaji]{luatexja-preset}
+\usepackage[margin=20mm,top=15mm,bottom=15mm]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{xltabular}   % page-breakable tabularx (long 業務内容 tables)
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{accent}{HTML}{2E5E8C}
+\definecolor{rulegray}{HTML}{9AA5B1}
+\definecolor{headbg}{HTML}{EDF2F7}
+\hypersetup{colorlinks=true, urlcolor=accent, linkcolor=accent}
+
+\setlength{\parindent}{0pt}
+\renewcommand{\arraystretch}{1.25}
+\arrayrulecolor{rulegray}
+\pagestyle{plain}
+\setlength{\LTpre}{2pt}    % kill longtable's default \bigskip padding
+\setlength{\LTpost}{2pt}
+
+% ---- section heading: blue gothic + rule ---------------
+\newcommand{\jsec}[1]{%
+  \par\vspace{9pt}%
+  {\color{accent}\gtfamily\bfseries\large #1}\par\vspace{-5pt}%
+  {\color{accent}\rule{\textwidth}{0.8pt}}\par\vspace{5pt}}
+
+% ---- company heading: name left / period right ---------
+\newcommand{\company}[2]{%
+  \par\noindent
+  \begingroup\setlength{\tabcolsep}{0pt}%
+  \begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}r@{}}
+    \gtfamily\bfseries #1 & \bfseries #2 \\
+  \end{tabular*}\endgroup\par\vspace{3pt}}
+
+% ---- compact list used inside table cells --------------
+\newlist{cbul}{itemize}{1}
+\setlist[cbul]{label=\textbullet, leftmargin=1.1em, topsep=1pt,
+               itemsep=1pt, parsep=0pt, partopsep=0pt}
+
+\newcommand{\skillrow}[2]{\noindent\textbf{#1}：#2\par\vspace{2pt}}
+\newcommand{\envline}[1]{\par\vspace{2pt}\noindent{\small\textbf{【開発環境】}#1}\par}
+
+% column types
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+%=========================================================
+\begin{document}
+\small
+
+% ------------------------- HEADER -----------------------
+\begin{center}
+  {\LARGE\gtfamily\bfseries 職務経歴書}
+\end{center}
+\vspace{-6pt}
+\begin{flushright}
+  2026年8月30日現在\\[2pt]
+  氏名：ルドラクシュ・カシヤップ（Rudraksh Kashyap）\\[3pt]
+  \small
+  インド・バンガロール \;$|$\; +91 7689814356 \;$|$\;
+  \href{mailto:rudrakshk@iitbhilai.ac.in}{rudrakshk@iitbhilai.ac.in}\\[1pt]
+  \href{https://github.com/RudrakshKashyap}{GitHub} \;$|$\;
+  \href{https://linkedin.com/in/rudrakshkashyap}{LinkedIn} \;$|$\;
+  \href{https://codeforces.com/profile/rudraksh}{Codeforces: Expert} \;$|$\;
+  \href{https://leetcode.com/rudraksh26}{LeetCode: 2000+}
+\end{flushright}
+
+% ------------------------- 職務要約 ---------------------
+\jsec{■\;職務要約}
+インド工科大学（IIT）ビライ校を卒業後、Brigosha Technologiesにて約1年6ヶ月、TypeScript／NestJSによるマイクロサービスの設計とReactフロントエンドの開発を担当しました。その後の2年間は、分散システムおよびコンピュータサイエンス基礎の独学と競技プログラミングに専念しました。2025年12月よりPlatinumRxにて、フルフィルメント（受注後業務）・オペレーション領域を担当するフルスタックエンジニアとして、REST APIの契約設計から実装、本番デプロイ、監視・障害対応までを一貫して担当しています。高負荷MySQLクエリの最適化や外部APIコストの削減など、パフォーマンスおよびコスト改善にも取り組んでいます。
+
+% ------------------------- スキル -----------------------
+\jsec{■\;活かせる経験・知識・スキル}
+\skillrow{言語}{TypeScript, JavaScript (ES6+), SQL, C/C++, Python, HTML5/CSS3}
+\skillrow{バックエンド・アーキテクチャ}{Node.js, NestJS, REST API設計, マイクロサービス, サービス指向アーキテクチャ, 分散システム}
+\skillrow{フロントエンド}{React.js, Next.js, TanStack Router／Query, Redux, Zustand, Tailwind CSS v4, Shadcn UI, デザインシステム}
+\skillrow{データベース・クラウド}{MySQL（インデックス設計、クエリチューニング、実行計画の分析）, Redis, AWS (EKS, CloudWatch, CodeBuild, OpenSearch), GCP}
+\skillrow{DevOps・監視}{Docker, Kubernetes, Turborepo, GitHub Actions (CI/CD), Grafana, SLO設計・アラート, Git, Linux}
+\skillrow{データ計測・グロース}{実験・指標の計測設計, Google Analytics (GA4), Google Tag Manager, WebEngage, Search Console}
+
+% ------------------------- 職務経歴 ---------------------
+\jsec{■\;職務経歴}
+
+\company{【1】PlatinumRx}{2025年12月 〜 現在}
+\begin{tabularx}{\textwidth}{|L{0.20\textwidth}|X|}
+\hline
+\textbf{事業内容} & オンライン医薬品販売プラットフォームの運営（ヘルステック） \\
+\hline
+% ↓ 従業員数は実際の数字に置き換えてください（○○ のままにしない）
+\textbf{所在地・規模} & インド・バンガロール \\
+\hline
+\textbf{雇用形態・職種} & 正社員／ソフトウェアエンジニア（フルスタック）・フルフィルメント\,\&\,オペレーションチーム \\
+\hline
+\textbf{開発体制} & 開発組織 全24名（バックエンド6名、フロントエンド4名、アプリ開発3名、ほかインターン・マネージャー／チームリード） \\
+\hline
+\end{tabularx}
+\vspace{4pt}
+
+\begin{xltabular}{\textwidth}{|L{0.20\textwidth}|X|}
+\hline
+\rowcolor{headbg}\textbf{担当領域} & \textbf{業務内容・実績} \\
+\hline
+\endhead
+\textbf{機能開発（エンドツーエンド）} &
+複数のNestJS／TypeScriptモジュールにまたがる機能を、REST APIの契約設計から本番デプロイまで一貫して担当。
+\begin{cbul}
+  \item Cookieベースのセッションによるリフレッシュトークン認証の実装
+  \item 複数倉庫・複数配送業者に対応したリアルタイム配送予定日（EDD）算出エンジンにおける、バージョンゲーティングと段階的（比率指定）ロールアウトの実装
+\end{cbul} \\
+\hline
+\textbf{パフォーマンス・コスト最適化} &
+\begin{cbul}
+  \item DBログと実行計画の分析により高トラフィックMySQLクエリのボトルネックを特定。クエリの書き換えと適切なインデックス追加により、影響の大きいクエリの実行時間を約30秒から1〜2秒へ短縮
+  \item GCP Geocode APIの利用状況を監査・見直し、コストを10分の1以下に削減
+  \item Next.jsアプリケーションのVercelからGCPへの移行を支援
+\end{cbul} \\
+\hline
+\textbf{フロントエンド基盤構築} &
+Turborepoモノレポ上にReact／TypeScriptアプリケーションを新規構築（TanStack Router \& Query、Zustand、Shadcn UIベースの独自デザインシステム）。GitHub ActionsによるCI/CDを整備。 \\
+\hline
+\textbf{信頼性・障害対応} &
+AWS CloudWatchのアラートをGoogle Chatへ連携し、障害検知から対応までの初動を短縮。Grafanaダッシュボードにより、サービスの信頼性およびパフォーマンスSLOを日次で監視。 \\
+\hline
+\textbf{データ計測・プロダクト改善} &
+GTM・GA4・WebEngageを用いて顧客向け導線のコンバージョンおよびファネルイベントを計測。Google Search Consoleのデータをもとに、プロダクト改善およびSEO施策を実施。 \\
+\hline
+\end{xltabular}
+\envline{TypeScript, Node.js, NestJS, React, Next.js, MySQL, Redis, Docker, Kubernetes (AWS EKS), AWS CloudWatch／CodeBuild／OpenSearch, GCP, Turborepo, GitHub Actions, Grafana}
+
+\vspace{8pt}
+\company{【2】Brigosha Technologies}{2022年7月 〜 2023年12月}
+\begin{tabularx}{\textwidth}{|L{0.20\textwidth}|X|}
+\hline
+\textbf{事業内容} & ソフトウェアの受託開発および自社プロダクト開発 \\
+\hline
+\textbf{所在地} & インド・バンガロール \\
+\hline
+\textbf{雇用形態・職種} & 正社員／ジュニアリサーチエンジニア（フルスタック） \\
+\hline
+\textbf{開発体制} & 開発チーム 6名 \\
+\hline
+\end{tabularx}
+\vspace{4pt}
+
+\begin{xltabular}{\textwidth}{|L{0.20\textwidth}|X|}
+\hline
+\rowcolor{headbg}\textbf{担当領域} & \textbf{業務内容・実績} \\
+\hline
+\endhead
+\textbf{システム設計（新規構築）} &
+法人向けオンライン講座マーケットプレイス（aulas.in）において、リレーショナルDBのスキーマ設計およびTypeScript／NestJSによるマイクロサービスを設計。バックエンドサービスとフロントエンドの双方を担当。 \\
+\hline
+\textbf{フロントエンド開発} &
+React／Reduxによるコンポーネントを実装し、重複するネットワークリクエストを排除。体感表示速度とユーザー体験を改善。 \\
+\hline
+\textbf{リアルタイム分析} &
+分析処理パイプラインを、バッチ処理からリアルタイムストリーミング処理へ再設計。 \\
+\hline
+\textbf{社内表彰} &
+技術的な実行力と開発スピードが評価され、Employee of the Year および Rising Star Award を受賞。 \\
+\hline
+\end{xltabular}
+\envline{TypeScript, Node.js, NestJS, React, Redux, SQL}
+
+% --------------------- 技術研鑽期間 ---------------------
+\jsec{■\;技術研鑽期間（2024年1月 〜 2025年12月）}
+本期間は、システム設計およびコンピュータサイエンス基礎の独学と、競技プログラミングに専念しました。
+\begin{cbul}
+  \item \textbf{分散システム：}CAP定理とトレードオフ、整合性モデル、合意アルゴリズム（Raft）、レプリケーションとシャーディング、Kafkaによるメッセージストリーミング、Redisのキャッシュ戦略、マイクロサービス間の通信パターン
+  \item \textbf{コンピュータサイエンス基礎：}OS内部構造（ページング、epoll、IPC、コンテキストスイッチ）、ネットワーク（TCP/UDP、TLS、HTTP）、データベース内部構造（B+木、LSM木、インデックス、実行計画）、Webセキュリティ（JWT／セッション、OAuth2 + PKCE、XSS／CSRF）
+  \item \textbf{アルゴリズム：}C++による競技プログラミングを継続し、Codeforces Expert、LeetCode 2000+ を達成
+\end{cbul}
+
+% --------------------- 技術プロジェクト -----------------
+\jsec{■\;技術プロジェクト}
+\company{モバイル端末による高性能計算クラスタ\normalfont{（C++, MPI, Buildroot, Linux）}}{2021年8月}
+\begin{cbul}
+  \item root化したAndroid端末をMPIで接続した計算クラスタを構築し、分散並列処理を実行。BuildrootのARM-EABIツールチェーンでMPICHライブラリをクロスコンパイルし、モバイル端末上で直接動作させた。
+\end{cbul}
+
+% --------------------- 学歴 -----------------------------
+\jsec{■\;学歴}
+\begin{tabularx}{\textwidth}{|L{0.20\textwidth}|X|}
+\hline
+\textbf{2018年 〜 2022年} & インド工科大学（IIT）ビライ校　電気工学科　学士（B.Tech）　卒業　GPA 7.41/10 \\
+\hline
+\end{tabularx}
+
+% --------------------- 語学・資格 -----------------------
+\jsec{■\;語学・保有資格}
+\skillrow{日本語}{日本語能力試験（JLPT）N2 取得（2026年7月）}
+\skillrow{英語}{ビジネスレベル}
+\skillrow{ヒンディー語}{母語}
+
+% --------------------- 自己PR ---------------------------
+\jsec{■\;自己PR}
+\textbf{【設計から運用まで一貫して担当する実行力】}\par
+現職では、REST APIの契約設計、複数モジュールにまたがる実装、フロントエンド、CI/CD、本番環境の監視までを一貫して担当しています。特定のレイヤーに閉じることなく、機能が実際にユーザーへ届き、安定して稼働し続けるところまでを自分の責任範囲と考えて業務に取り組んでいます。
+\vspace{4pt}
+
+\textbf{【計測に基づく課題特定と改善】}\par
+パフォーマンスやコストの改善においては、まずDBログ・実行計画・API利用状況といった実データを確認し、影響の大きい箇所から着手することを重視しています。高負荷クエリの約30秒から1〜2秒への短縮や、外部APIコストの10分の1以下への削減は、いずれもこの進め方によって実現したものです。
+\vspace{4pt}
+
+\textbf{【基礎からの継続的な学習】}\par
+2024年からの2年間、分散システムやOS・データベースの内部構造といった基礎領域を体系的に学び直し、並行して競技プログラミングに取り組みました（Codeforces Expert、LeetCode 2000+）。フレームワークの表層的な知識にとどまらず、仕組みを理解した上で技術選定や設計判断を行えることが強みです。
+
+\vspace{8pt}
+\begin{flushright}
+以上
+\end{flushright}
+
+\end{document}
