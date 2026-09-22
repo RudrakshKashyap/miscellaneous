@@ -11,6 +11,7 @@ Unlike digital signatures, MACs are faster but require a pre-shared key.
 
 ### **Types of MAC Algorithms**
 #### **1. HMAC (Hash-based MAC)**
+- We use HMAC (Hash-based Message Authentication Code) instead of digital signatures primarily because of computational efficiency, throughput, and simplicity when both parties already share a secret.
 - Uses a **cryptographic hash function (e.g., SHA-256)** + a **secret key**.
 - Example: `MAC = HMAC-SHA256(key, message)`
 - Secure against length-extension attacks.
